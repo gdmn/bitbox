@@ -119,6 +119,7 @@ public abstract class Configuration implements ConfigurationListener {
 		String[] configFileLocations = new String[]{
 			USERHOME + File.separator + CONFIGCONFIG + File.separator + CONFIGDIR + File.separator + CONFIGFILENAME,
 			USERHOME + File.separator + CONFIGCONFIG + File.separator + CONFIGFILENAME,
+			USERHOME + File.separator + "." + CONFIGDIR + File.separator + CONFIGFILENAME,
 			USERHOME + File.separator + CONFIGDIR + File.separator + CONFIGFILENAME,
 			USERHOME + File.separator + "." + CONFIGFILENAME,
 			USERHOME + File.separator + CONFIGFILENAME,};
