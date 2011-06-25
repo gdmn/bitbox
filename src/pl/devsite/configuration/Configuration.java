@@ -26,6 +26,10 @@ public abstract class Configuration implements ConfigurationListener {
 
 	public abstract Properties getDefaultProperties();
 
+	protected Configuration() {
+		 properties = new Properties(getDefaultProperties());
+	}
+
 	public void notifyListeners() {
 		for (ConfigurationChangeListener l : listeners) {
 			l.configurationUpdated(properties);
@@ -73,7 +77,7 @@ public abstract class Configuration implements ConfigurationListener {
 	}
 
 	public File getFile() {
-		return configurationWatcher.getFile();
+		return configurationWatcher == null ? null : configurationWatcher.getFile();
 	}
 
 	public String getProperty(String key) {

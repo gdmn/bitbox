@@ -41,7 +41,20 @@ public class BitBoxConfiguration extends Configuration {
 	public final static String PROPERTY_BIGBIT_SERVER_PORT = "bigbit.server.port";
 	public final static String PROPERTY_BIGBIT_ENABLED = "bigbit.enabled";
 	//--
+	private static BitBoxConfiguration instance;
 
+	static {
+		instance = new BitBoxConfiguration();
+	}
+
+	private BitBoxConfiguration() {
+		super();
+		tryToLoadConfig(null);
+	}
+
+	public static BitBoxConfiguration getInstance() {
+		return instance;
+	}
 //	public abstract Properties getDefaultProperties();
 //	@Override
 //	public void readConfiguration(File file) throws IOException {
@@ -55,6 +68,7 @@ public class BitBoxConfiguration extends Configuration {
 //			parseProperties();
 //		}
 //	}
+
 	public String getHeadBodyHTTP() {
 		String headBodyHTTP = HttpTools.convertToMultiline(new String[]{
 					HttpTools.XHTMLHEADER,
@@ -141,28 +155,12 @@ public class BitBoxConfiguration extends Configuration {
 
 	@Override
 	public Properties getDefaultProperties() {
-		return defaultProperties;
-	}
-	private final Properties defaultProperties = new Properties();
-
-	{
+		Properties defaultProperties = new Properties();
 		defaultProperties.setProperty(PROPERTY_WWW, "/");
 		defaultProperties.setProperty(PROPERTY_NAME, "BitBox Server");
 		defaultProperties.setProperty(PROPERTY_PORT, "8080");
 		defaultProperties.setProperty(PROPERTY_POOLSIZE, "0");
 		defaultProperties.setProperty(PROPERTY_AUTHENTICATOR, "basic");
-	}
-	private static BitBoxConfiguration instance;
-
-	static {
-		instance = new BitBoxConfiguration();
-	}
-
-	private BitBoxConfiguration() {
-		tryToLoadConfig(null);
-	}
-
-	public static BitBoxConfiguration getInstance() {
-		return instance;
+		return defaultProperties;
 	}
 }
