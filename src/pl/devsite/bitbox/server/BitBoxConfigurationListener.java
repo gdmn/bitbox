@@ -41,7 +41,7 @@ public class BitBoxConfigurationListener implements ConfigurationChangeListener 
 					String name = properties.getProperty(share + "name");
 					String sysPath = properties.getProperty(share + "path");
 					String type = properties.getProperty(share + "type");
-					System.out.println("#share " + name + " " + sysPath + " " + type);
+					// System.out.println("#share " + name + " " + sysPath + " " + type);
 					SendableAdapter sh = new SendableFileWithMimeResolver(sendableRoot, new File(sysPath));
 					if (name != null && !name.isEmpty()) {
 						sh.setName(name);

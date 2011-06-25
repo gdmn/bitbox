@@ -27,7 +27,7 @@ public abstract class Configuration implements ConfigurationListener {
 	public abstract Properties getDefaultProperties();
 
 	protected Configuration() {
-		 properties = new Properties(getDefaultProperties());
+		properties = new Properties(getDefaultProperties());
 	}
 
 	public void notifyListeners() {
@@ -47,7 +47,7 @@ public abstract class Configuration implements ConfigurationListener {
 
 	@Override
 	public void readConfiguration(File file) throws IOException {
-		properties = new Properties(getDefaultProperties());
+		properties = new PropertiesWithSections(getDefaultProperties());
 		try {
 			properties.load(new FileInputStream(file));
 		} finally {

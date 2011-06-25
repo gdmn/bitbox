@@ -114,6 +114,7 @@ public abstract class SendableAdapter implements Sendable {
     }
 
     public static Sendable tryToFindSendable(Sendable root, String path) {
+		if (path == null) return null;
         String[] splitted = path.split("/");
         Sendable now = root;
         for (String spl : splitted) {
