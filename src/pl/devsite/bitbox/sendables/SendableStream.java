@@ -33,7 +33,7 @@ public class SendableStream extends SendableAdapter {
         try {
             stream.reset();
         } catch (IOException ex) {
-            Logger.getLogger(SendableStream.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SendableStream.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
         }
         return stream;
     }

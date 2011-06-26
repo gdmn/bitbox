@@ -77,7 +77,7 @@ public abstract class SocketCommunicator implements Runnable {
 				socket.setTcpNoDelay(true);
 				socket.setSoLinger(true, 10); // wait max XX sec after socket closed
 			} catch (SocketException ex) {
-				Logger.getLogger(BigBitBoxProxifier.class.getName()).log(Level.SEVERE, null, ex);
+				Logger.getLogger(BigBitBoxProxifier.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
 	}
@@ -139,7 +139,7 @@ public abstract class SocketCommunicator implements Runnable {
 //					}
 					socket.close();
 				} catch (IOException ex) {
-					logger.log(Level.SEVERE, null, ex);
+					logger.log(Level.SEVERE, ex.getMessage(), ex);
 				}
 			}
 

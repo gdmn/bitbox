@@ -36,8 +36,8 @@ public abstract class ServletAdapter extends SendableAdapter implements Servlet 
     }
 
     @Override
-    public void setRequestHeader(String requestHeader) {
-        this.requestHeader = new HttpHeader(requestHeader);
+    public void setRequestHeader(HttpHeader requestHeader) {
+        this.requestHeader = requestHeader;
     }
 
     public InputStream getRequestContentStream() {

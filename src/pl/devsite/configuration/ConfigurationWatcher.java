@@ -61,9 +61,9 @@ public class ConfigurationWatcher {
 					}
 				}
 			} catch (InterruptedException ex) {
-				logger.log(Level.SEVERE, null, ex);
+				logger.log(Level.SEVERE, ex.getMessage(), ex);
 			} catch (IOException ex) {
-				logger.log(Level.SEVERE, null, ex);
+				logger.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
 	}

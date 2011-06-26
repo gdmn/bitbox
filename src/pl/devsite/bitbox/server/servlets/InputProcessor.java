@@ -1,6 +1,7 @@
 package pl.devsite.bitbox.server.servlets;
 
 import java.io.InputStream;
+import pl.devsite.bitbox.server.HttpHeader;
 
 /**
  *
@@ -10,5 +11,5 @@ public interface InputProcessor {
 
     void setRequestStream(InputStream input);
 
-    void setRequestHeader(String requestHeader);
+    void setRequestHeader(HttpHeader requestHeader);
 }

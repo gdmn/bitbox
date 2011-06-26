@@ -38,7 +38,7 @@ public class SendableFile extends SendableAdapter {
 				return new FileInputStream(file);
 			}
 		} catch (FileNotFoundException ex) {
-			Logger.getLogger(SendableFile.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(SendableFile.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
 		} finally {
 		}
 		return null;
@@ -122,7 +122,7 @@ public class SendableFile extends SendableAdapter {
 			try {
 				result = file.getCanonicalPath().toString();
 			} catch (IOException ex) {
-				Logger.getLogger(SendableFile.class.getName()).log(Level.SEVERE, null, ex);
+				Logger.getLogger(SendableFile.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
 			}
 			if (file.isDirectory() && !result.endsWith(java.io.File.separator)) {
 				result = result + java.io.File.separator;

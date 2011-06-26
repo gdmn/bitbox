@@ -19,7 +19,7 @@ public class SendableString extends SendableStream {
         try {
             byteArrayString = string.getBytes("UTF-8");
         } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(SendableString.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SendableString.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
         }
     }
 

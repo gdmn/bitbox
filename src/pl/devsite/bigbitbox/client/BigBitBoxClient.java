@@ -50,7 +50,7 @@ public class BigBitBoxClient extends SocketCommunicator {
 					try {
 						m.getSocket().close();
 					} catch (IOException ex) {
-						logger.log(Level.SEVERE, null, ex);
+						logger.log(Level.SEVERE, ex.getMessage(), ex);
 					}
 				}
 			}
@@ -293,7 +293,7 @@ public class BigBitBoxClient extends SocketCommunicator {
 //				try {
 //					Thread.sleep(500);
 //				} catch (InterruptedException ex) {
-//					Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+//					Logger.getLogger(Client.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
 //				}
 				for (;;) {
 					line = read();
@@ -372,7 +372,7 @@ public class BigBitBoxClient extends SocketCommunicator {
 //                            try {
 //                                Thread.sleep(2110);
 //                            } catch (InterruptedException ex) {
-//                                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+//                                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
 //                            }
 //                        }
 					} finally {

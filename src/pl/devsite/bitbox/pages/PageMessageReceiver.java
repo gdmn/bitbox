@@ -51,7 +51,7 @@ public class PageMessageReceiver extends ServletAdapter {
         try {
             getRequestContent();
         } catch (IOException ex) {
-            Logger.getLogger(PageMessageReceiver.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PageMessageReceiver.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
         }
     }
 }

@@ -82,10 +82,10 @@ public class BigBitBoxProxifier implements Runnable {
 		} catch (InterruptedException ex) {
 		} catch (SocketException ex) {
 			if (started) {
-				logger.log(Level.SEVERE, null, ex);
+				logger.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		} catch (IOException ex) {
-			logger.log(Level.SEVERE, null, ex);
+			logger.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 	}
 	/*
@@ -210,7 +210,7 @@ public class BigBitBoxProxifier implements Runnable {
 						send("");
 					}
 				} catch (InterruptedException ex) {
-					Logger.getLogger(BigBitBoxProxifier.class.getName()).log(Level.SEVERE, null, ex);
+					Logger.getLogger(BigBitBoxProxifier.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
 				}
 				line = SocketCommunicator.read(in);
 				String firstLine = line;
@@ -337,7 +337,7 @@ public class BigBitBoxProxifier implements Runnable {
 										}
 									} while (!req.processor.canBeFinalized);
 								} catch (InterruptedException ex) {
-									Logger.getLogger(BigBitBoxProxifier.class.getName()).log(Level.SEVERE, null, ex);
+									Logger.getLogger(BigBitBoxProxifier.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
 								}
 							}
 //                        System.out.println("wait complete...........");

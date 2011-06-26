@@ -55,6 +55,11 @@ public class BitBoxConfiguration extends Configuration {
 	public static BitBoxConfiguration getInstance() {
 		return instance;
 	}
+
+	void resetBuffers() {
+		menuBuffer = null;
+	}
+
 //	public abstract Properties getDefaultProperties();
 //	@Override
 //	public void readConfiguration(File file) throws IOException {
@@ -68,7 +73,6 @@ public class BitBoxConfiguration extends Configuration {
 //			parseProperties();
 //		}
 //	}
-
 	public String getHeadBodyHTTP() {
 		String headBodyHTTP = HttpTools.convertToMultiline(new String[]{
 					HttpTools.XHTMLHEADER,
