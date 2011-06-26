@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package pl.devsite.bitbox.pages;
 
 import pl.devsite.bitbox.authenticator.HttpAuthenticator;

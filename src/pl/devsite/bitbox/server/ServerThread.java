@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package pl.devsite.bitbox.server;
 
 import pl.devsite.bitbox.sendables.Sendable;
@@ -26,7 +22,7 @@ import static pl.devsite.bitbox.server.BitBoxConfiguration.*;
 
 /**
  *
- * @author gorladam
+ * @author dmn
  */
 public class ServerThread implements Runnable {
 

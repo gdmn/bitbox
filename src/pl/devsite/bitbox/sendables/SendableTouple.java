@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package pl.devsite.bitbox.sendables;
 
 import pl.devsite.bitbox.server.*;
@@ -10,7 +5,7 @@ import java.io.InputStream;
 
 /**
  *
- * @author gorladam
+ * @author dmn
  */
 public class SendableTouple extends SendableAdapter {
     private Sendable master, slave;

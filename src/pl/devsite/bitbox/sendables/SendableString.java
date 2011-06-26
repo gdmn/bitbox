@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package pl.devsite.bitbox.sendables;
 
 import java.io.ByteArrayInputStream;
@@ -12,7 +8,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author gorladam
+ * @author dmn
  */
 public class SendableString extends SendableStream {
 

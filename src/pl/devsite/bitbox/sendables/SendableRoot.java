@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 /**
  *
- * @author gorladam
+ * @author dmn
  */
 public class SendableRoot extends SendableAdapter {
 

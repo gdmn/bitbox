@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package pl.devsite.bitbox.pages;
 
 import pl.devsite.bitbox.sendables.SendableString;
@@ -10,7 +6,7 @@ import static pl.devsite.bitbox.server.HttpTools.CONTENTTYPE_TEXT_HTML;
 
 /**
  *
- * @author gorladam
+ * @author dmn
  */
 public class PageUpload extends SendableString {
 

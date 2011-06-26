@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package pl.devsite.bitbox.server;
 
 import pl.devsite.bitbox.sendables.SendableError;
@@ -19,7 +15,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author gorladam
+ * @author dmn
  */
 public class Server implements Runnable {
 

@@ -1,15 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package pl.devsite.bitbox.sendables;
 
 import pl.devsite.bitbox.server.*;
 
 /**
  *
- * @author gorladam
+ * @author dmn
  */
 public class SendableError extends SendableString implements HasHtmlHeaders {
 

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package pl.devsite.bitbox.authenticator;
 
 import pl.devsite.bitbox.server.*;
@@ -10,7 +6,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author gorladam
+ * @author dmn
  */
 public class HttpDigestAuthenticator implements HttpAuthenticator {
 

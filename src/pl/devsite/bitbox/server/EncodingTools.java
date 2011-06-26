@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package pl.devsite.bitbox.server;
 
 import java.nio.ByteBuffer;
@@ -15,7 +11,7 @@ import sun.nio.cs.ThreadLocalCoders;
 
 /**
  *
- * @author gorladam
+ * @author dmn
  */
 public class EncodingTools {
 

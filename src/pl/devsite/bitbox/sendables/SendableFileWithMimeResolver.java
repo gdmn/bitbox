@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package pl.devsite.bitbox.sendables;
 
 import java.io.BufferedReader;
@@ -17,7 +13,7 @@ import java.util.Scanner;
 
 /**
  *
- * @author gorladam
+ * @author dmn
  */
 public class SendableFileWithMimeResolver extends SendableFile {
 

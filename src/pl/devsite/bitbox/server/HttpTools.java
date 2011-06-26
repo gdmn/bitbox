@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package pl.devsite.bitbox.server;
 
 import pl.devsite.bitbox.authenticator.HttpAuthenticator;
@@ -12,7 +8,7 @@ import java.util.Random;
 
 /**
  *
- * @author gorladam
+ * @author dmn
  */
 public class HttpTools {
 
