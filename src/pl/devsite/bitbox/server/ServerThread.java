@@ -350,7 +350,6 @@ public class ServerThread implements Runnable {
 		socket.setReceiveBufferSize(buffer.length);
 		socket.setSoTimeout(5000);
 
-		//String splitter = "\r\n" + partHeader.substring(0, partHeader.indexOf("\r\n")) + "--\r\n";
 		String splitter = "\r\n" + partHeader.get(0) + "--\r\n";
 		int splitterLength = splitter.length();
 		boolean ok = false;
