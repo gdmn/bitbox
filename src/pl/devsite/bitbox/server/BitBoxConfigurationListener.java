@@ -108,7 +108,6 @@ public class BitBoxConfigurationListener implements ConfigurationChangeListener 
 						String name = properties.getProperty(share + "name");
 						Sendable serverPath = SendableAdapter.tryToFindSendable(sendableRoot, name);
 						logger.info("Allowed to \'" + name + "\': " + allowedUsers);
-						System.out.println("#allowed " + name + " " + allowedUsers);
 						String[] userArray = allowedUsers.split(",");
 						if (serverPath instanceof SendableAdapter) {
 							SendableAdapter sendableServerPath = (SendableAdapter) serverPath;
