@@ -1,7 +1,7 @@
 package pl.devsite.bigbitbox.client;
 
+import pl.devsite.bitbox.tools.InetTools;
 import java.net.InetSocketAddress;
-import java.net.Proxy;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Properties;
@@ -88,16 +88,7 @@ public class MainThread implements Runnable, ConfigurationChangeListener {
 
 	static Socket createSocketToBigBitBoxServer() throws IOException {
 		BitBoxConfiguration config = BitBoxConfiguration.getInstance();
-		String type = config.getProperty(PROPERTY_BIGBIT_PROXY_TYPE);
-		type = type == null ? null : type.toLowerCase();
-		boolean enabled = str2boolean(config.getProperty(PROPERTY_BIGBIT_PROXY_ENABLED, "0"));
-		Integer port = str2int(config.getProperty(PROPERTY_BIGBIT_PROXY_PORT));
-		String host = config.getProperty(PROPERTY_BIGBIT_PROXY_HOST);
-		Proxy proxy = null;
-		if (enabled) {
-			proxy = new Proxy(("socks".equals(type) ? Proxy.Type.SOCKS : Proxy.Type.HTTP), new InetSocketAddress(host, port));
-		}
-		Socket socket = enabled ? new Socket(proxy) : new Socket();
+		Socket socket = InetTools.getProxifiedSocket();
 		socket.setTcpNoDelay(true);
 		//socket.setKeepAlive(false);
 		socket.setSoLinger(true, 60); // wait max XX sec after socket closed

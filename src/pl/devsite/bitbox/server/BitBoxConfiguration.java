@@ -31,11 +31,14 @@ public class BitBoxConfiguration extends Configuration {
 	public static final String PROPERTY_SHARE = "share";
 	public static final String PROPERTY_MENU = "menu";
 	public static final String PROPERTY_AUTHENTICATOR = "authenticator";
+	public static final String PROPERTY_SHOW_INTERNAL_IP_IN_FOOTER = "server.footer.ip.internal";
+	public static final String PROPERTY_SHOW_EXTERNAL_IP_IN_FOOTER = "server.footer.ip.external";
 	//--
-	public final static String PROPERTY_BIGBIT_PROXY_PORT = "bigbit.proxy.port";
-	public final static String PROPERTY_BIGBIT_PROXY_HOST = "bigbit.proxy.host";
-	public final static String PROPERTY_BIGBIT_PROXY_TYPE = "bigbit.proxy.type";
-	public final static String PROPERTY_BIGBIT_PROXY_ENABLED = "bigbit.proxy.enabled";
+	public final static String PROPERTY_PROXY_PORT = "proxy.port";
+	public final static String PROPERTY_PROXY_HOST = "proxy.host";
+	public final static String PROPERTY_PROXY_TYPE = "proxy.type";
+	public final static String PROPERTY_PROXY_ENABLED = "proxy.enabled";
+	
 	public final static String PROPERTY_BIGBIT_NODE_NAME = "bigbit.node.name";
 	public final static String PROPERTY_BIGBIT_SERVER_HOST = "bigbit.server.host";
 	public final static String PROPERTY_BIGBIT_SERVER_PORT = "bigbit.server.port";
