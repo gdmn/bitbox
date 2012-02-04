@@ -1,14 +1,10 @@
 package pl.devsite.bitbox.sendables;
 
-import pl.devsite.bitbox.server.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import pl.devsite.bitbox.server.HtmlLister;
 
 public class SendableFile extends SendableAdapter {
 
@@ -131,4 +127,9 @@ public class SendableFile extends SendableAdapter {
 		}
 		return null;
 	}
+
+	public File getFile() {
+		return file;
+	}
+	
 }

@@ -1,21 +1,26 @@
 package pl.devsite.bitbox.sendables;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import pl.devsite.bigbitbox.system.Soxi;
+import pl.devsite.bitbox.server.HttpTools;
 
 /**
  *
  * @author dmn
  */
 public class SendableFileWithMimeResolver extends SendableFile {
+
+	public static String AUDIO_HTTP_HEADER_PREFIX = "Audio-";
+	private String metadata;
+	private boolean metadataCollected = false;
+	private HashMap<String, String> metadataMap;
 
     public SendableFileWithMimeResolver(Sendable parent, File file) {
         super(parent, file);
@@ -36,6 +41,56 @@ public class SendableFileWithMimeResolver extends SendableFile {
             return resolveFileExt(fileExt);
         }
     }
+
+	public String getMetadataValue(String key) {
+		if (!metadataCollected) {
+			getMetadata();
+		}
+		if (metadata == null) {
+			return null;
+		}
+		if (metadataMap == null) {
+			String[] lines = metadata.split(HttpTools.BR);
+			metadataMap = new HashMap<String, String>();
+			for (String line : lines) {
+				int p = line.indexOf('=');
+				if (p >= 0 && p < line.length() - 1) {
+					String key_ = line.substring(0, p).trim().toLowerCase();
+					String value_ = line.substring(p + 1, line.length()).trim();
+					metadataMap.put(key_, value_);
+				}
+			}
+		}
+		return metadataMap.get(key.toLowerCase());
+	}
+
+	public String getMetadata() {
+		if (metadataCollected) {
+			return metadata;
+		}
+		String mime = getMimeType();
+		StringBuilder result = new StringBuilder();
+		if (mime.startsWith("audio/")) {
+			String audioInfo = null;
+			try {
+				audioInfo = Soxi.query(getFile().getCanonicalPath());
+				if (audioInfo != null) {
+					audioInfo = AUDIO_HTTP_HEADER_PREFIX + audioInfo.replace("\n", "\n" + AUDIO_HTTP_HEADER_PREFIX);
+					audioInfo = audioInfo.replace("\r", "").replace("\n", HttpTools.BR).trim();
+					result.append(audioInfo).append(HttpTools.BR);
+				}
+			} catch (IOException ex) {
+				Logger.getLogger(HttpTools.class.getName()).log(Level.SEVERE, null, ex);
+			}
+		}
+		metadataCollected = true;
+		if (result.length() > 0) {
+			metadata = result.substring(0, result.length() - HttpTools.BR.length());
+		} else {
+			metadata = null;
+		}
+		return metadata;
+	}
 
     private static boolean contains(String what, String... where) {
         for (String s : where) {

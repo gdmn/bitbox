@@ -1,13 +1,1 @@
-syntax: glob
-
-
-*~
-*.class
-*.jar
-*.swp
-*conflicted copy*
-build/*
-dist/*
-deprecated/*
-temp/*
-*.sh
+../hgignore_for_netbeans

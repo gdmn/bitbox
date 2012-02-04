@@ -1,27 +1,23 @@
 package pl.devsite.bitbox.server;
 
-import java.util.List;
-import pl.devsite.bitbox.server.HttpHeader.HttpRequestType;
-import pl.devsite.bitbox.sendables.Sendable;
-import pl.devsite.bitbox.sendables.SendableAdapter;
-import pl.devsite.bitbox.authenticator.HttpAuthenticator;
-import pl.devsite.bitbox.server.servlets.InputProcessor;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import pl.devsite.bitbox.tools.InetTools;
+import pl.devsite.bitbox.authenticator.HttpAuthenticator;
+import pl.devsite.bitbox.sendables.Sendable;
+import pl.devsite.bitbox.sendables.SendableAdapter;
+import pl.devsite.bitbox.sendables.SendableFileWithMimeResolver;
 import static pl.devsite.bitbox.server.BitBoxConfiguration.*;
+import pl.devsite.bitbox.server.HttpHeader.HttpRequestType;
+import pl.devsite.bitbox.server.servlets.InputProcessor;
+import pl.devsite.bitbox.tools.InetTools;
+import static pl.devsite.configuration.Configuration.str2boolean;
 
 /**
  *
@@ -94,22 +90,24 @@ public class ServerThread implements Runnable {
 
 		if (str2boolean(bitBoxConfiguration.getProperty(PROPERTY_SHOW_INTERNAL_IP_IN_FOOTER))) {
 			List<String> internalIp = InetTools.tryToGuessIp();
-			if (internalIp != null && !internalIp.isEmpty()){
-			b.append("\r\n<div class=\"right\">");
-			for (String ip : internalIp) {
-				b.append("&nbsp;[").append("<a href=\"http://").append(ip).append(":").append(bitBoxConfiguration.getProperty(PROPERTY_PORT)).append("/\">").append(ip).append("</a>]");
+			if (internalIp != null && !internalIp.isEmpty()) {
+				b.append("\r\n<div class=\"right\">");
+				for (String ip : internalIp) {
+					b.append("&nbsp;[").append("<a href=\"http://").append(ip).append(":").append(bitBoxConfiguration.getProperty(PROPERTY_PORT)).append("/\">").append(ip).append("</a>]");
+				}
+				b.append("</div>");
 			}
-			b.append("</div>");}
 		}
 
 		if (str2boolean(bitBoxConfiguration.getProperty(PROPERTY_SHOW_EXTERNAL_IP_IN_FOOTER))) {
 			String ip = InetTools.getExternalIp();
 			if (ip != null && !ip.isEmpty()) {
-			b.append("\r\n<div class=\"right\">");
-			b.append("&nbsp;[").append("<a href=\"http://").append(ip).append(":").append(bitBoxConfiguration.getProperty(PROPERTY_PORT)).append("/\">").append(ip).append("</a>]");
-			b.append("</div>");}
+				b.append("\r\n<div class=\"right\">");
+				b.append("&nbsp;[").append("<a href=\"http://").append(ip).append(":").append(bitBoxConfiguration.getProperty(PROPERTY_PORT)).append("/\">").append(ip).append("</a>]");
+				b.append("</div>");
+			}
 		};
-		
+
 		b.append("</div>").append("\r\n");
 		b.append("</div></body></html>");
 		sendUTF8(b.toString());
@@ -163,9 +161,33 @@ public class ServerThread implements Runnable {
 		clientOut.write(fileBuffer, 0, dlugosc * 16 + 1);
 	}
 
-	private void sendIcyStream(InputStream in, String name, int chunkSize) throws IOException {
+	private void sendIcyStream(InputStream in, Sendable sendable, int chunkSize) throws IOException {
 		int n;
 		boolean sendHeader = false;
+		String name = sendable.toString();
+		if (sendable instanceof SendableFileWithMimeResolver) {
+			SendableFileWithMimeResolver sf = (SendableFileWithMimeResolver) sendable;
+			StringBuilder nameBuilder = new StringBuilder();
+			String album = sf.getMetadataValue(SendableFileWithMimeResolver.AUDIO_HTTP_HEADER_PREFIX + "Album");
+			String artist = sf.getMetadataValue(SendableFileWithMimeResolver.AUDIO_HTTP_HEADER_PREFIX + "Artist");
+			String title = sf.getMetadataValue(SendableFileWithMimeResolver.AUDIO_HTTP_HEADER_PREFIX + "Title");
+			String length = sf.getMetadataValue(SendableFileWithMimeResolver.AUDIO_HTTP_HEADER_PREFIX + "Length");
+			if (artist != null) {
+				nameBuilder.append(artist).append(' ');
+			}
+			if (album != null) {
+				nameBuilder.append("[").append(album).append("] ");
+			}
+			if (title != null) {
+				if (nameBuilder.length() > 0) {
+					nameBuilder.append("- ");
+				}
+				nameBuilder.append(title).append(' ');
+			}
+			if (nameBuilder.length() > 0) {
+				name = nameBuilder.substring(0, nameBuilder.length() - 1);
+			}
+		}
 
 		byte[] fileBuffer = new byte[chunkSize];
 		try {
@@ -259,10 +281,12 @@ public class ServerThread implements Runnable {
 		} else if (response == null && (getRequest || headRequest)) {
 			logger.log(Level.WARNING, "not found: {0}, invader: {1}", new Object[]{stringRequest, socket.getInetAddress().getHostAddress()});
 			sendUTF8(HttpTools.createHttpResponse(404, bitBoxConfiguration.getProperty(PROPERTY_NAME), true));
-		} else if (icyMetaData && !"audio/mpeg".equals(response.getMimeType())) {
+		} else if (icyMetaData && !("audio/mpeg".equals(response.getMimeType()) /*
+				 * || "audio/ogg".equals(response.getMimeType())
+				 */)) {
 			logger.log(Level.WARNING, "streaming forbidden, invader: {0}", socket.getInetAddress().getHostAddress());
 			sendUTF8(HttpTools.createHttpResponse(403, bitBoxConfiguration.getProperty(PROPERTY_NAME), true));
-		} else if ((getRequest || headRequest) && response.hasChildren() && !stringRequest.equals("") && !stringRequest.endsWith("/")) {
+		} else if ((getRequest || headRequest) && response.hasChildren() && !stringRequest.isEmpty() && !stringRequest.endsWith("/")) {
 			logger.log(Level.INFO, "redirecting to /{0}/", stringRequest);
 			sendUTF8(HttpTools.createHttpResponse(301, HttpTools.LOCATION, "/" + stringRequest + "/"));
 		} else if ((getRequest || headRequest) && response.getFilter() != null && !response.getFilter().isAllowed(response, socket.getInetAddress().getHostAddress(), authenticatedUser)) {
@@ -304,16 +328,20 @@ public class ServerThread implements Runnable {
 			} else if (raw && response instanceof HasHtmlHeaders) {
 				sendUTF8(((HasHtmlHeaders) response).getHtmlHeader());
 			} else if (rangeStart != null || rangeStop != null) {
-				sendUTF8(HttpTools.createHttpResponse(206, bitBoxConfiguration.getProperty(PROPERTY_NAME), (rangeStart == null ? -1 : rangeStart), (rangeStop == null ? -1 : rangeStop), response.getContentLength(), response.getMimeType()));
+				sendUTF8(HttpTools.createHttpResponse(206, bitBoxConfiguration.getProperty(PROPERTY_NAME),
+						(rangeStart == null ? -1 : rangeStart),
+						(rangeStop == null ? -1 : rangeStop),
+						response.getContentLength(),
+						response.getMimeType()));
 			} else {
-				sendUTF8(HttpTools.createHttpResponse(200, bitBoxConfiguration.getProperty(PROPERTY_NAME), response.getContentLength(), response.getMimeType()));
+				sendUTF8(HttpTools.createHttpResponse(bitBoxConfiguration.getProperty(PROPERTY_NAME), response));
 			}
 			if (getRequest) {
 				if (!raw) {
 					sendHeader(stringRequest);
 				}
 				if (icyMetaData) {
-					sendIcyStream(bis, response.toString(), 1024 * 16);
+					sendIcyStream(bis, response, 1024 * 16);
 				} else {
 					if (response.getContentLength() > 0 && rangeStop == null) {
 						rangeStop = new Integer((int) response.getContentLength() - 1);

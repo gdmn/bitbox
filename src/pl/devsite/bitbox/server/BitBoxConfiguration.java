@@ -44,6 +44,8 @@ public class BitBoxConfiguration extends Configuration {
 	public final static String PROPERTY_BIGBIT_SERVER_PORT = "bigbit.server.port";
 	public final static String PROPERTY_BIGBIT_ENABLED = "bigbit.enabled";
 	//--
+	public static final String PROPERTY_SOXI = "server.tools.soxi";
+	//--
 	private static BitBoxConfiguration instance;
 
 	static {
