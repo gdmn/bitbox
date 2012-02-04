@@ -22,7 +22,7 @@ public class BitBoxConfiguration extends Configuration {
 	public static final String AUTHENTICATOR_BASIC = "basic";
 	public static final String AUTHENTICATOR_DIGEST = "digest";
 	//--
-	public static final String PROPERTY_ADDR = "server.addr";
+	public static final String PROPERTY_ADDR = "server.bind";
 	public static final String PROPERTY_PORT = "server.port";
 	public static final String PROPERTY_NAME = "server.name";
 	public static final String PROPERTY_WWW = "server.www";
