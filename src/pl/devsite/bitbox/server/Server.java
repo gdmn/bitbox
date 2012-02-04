@@ -2,9 +2,7 @@ package pl.devsite.bitbox.server;
 
 import pl.devsite.bitbox.sendables.SendableError;
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketException;
+import java.net.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -81,8 +79,10 @@ public class Server implements Runnable {
 
     protected void protectedRun() throws IOException {
         try {
-            server = new ServerSocket(port);
-            while (started) {
+			String addr = bitBoxConfiguration.getProperty(BitBoxConfiguration.PROPERTY_ADDR);
+			InetAddress inetAddress = addr == null ? null : InetAddress.getByName(addr);
+			server = inetAddress == null ? new ServerSocket(port) : new ServerSocket(port, 50, inetAddress);
+			while (started) {
                 Socket client = server.accept();
                 //pool.execute(new ServerThread(server.accept(), sendableRoot));
                 Runnable t = null;
