@@ -140,10 +140,11 @@ public class InetTools {
 						String line;
 						boolean afterHeader = false;
 						while ((line = br.readLine()) != null) {
-							//System.out.println("> " + line);
 							if (afterHeader) {
 								externalIpCache = line.trim();
-								break;
+								if (!externalIpCache.isEmpty()) {
+									break;
+								}
 							}
 							if (line.isEmpty()) {
 								afterHeader = true;
