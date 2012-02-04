@@ -35,7 +35,7 @@ public class Soxi implements SystemProcessInterface<String>, SystemProcessCallba
 			}
 			soxi = Soxi.getInstance();
 			soxi.setAdditionalOptions("-a");//tags
-			return "Length="+seconds + '\n' + soxi.query(fileName, soxi);
+			return ("Length="+seconds + '\n' + soxi.query(fileName, soxi)).trim();
 		} catch (InstantiationException ex) {
 			return null;
 		}

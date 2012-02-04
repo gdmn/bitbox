@@ -75,8 +75,8 @@ public class SendableFileWithMimeResolver extends SendableFile {
 			try {
 				audioInfo = Soxi.query(getFile().getCanonicalPath());
 				if (audioInfo != null) {
-					audioInfo = AUDIO_HTTP_HEADER_PREFIX + audioInfo.replace("\n", "\n" + AUDIO_HTTP_HEADER_PREFIX);
-					audioInfo = audioInfo.replace("\r", "").replace("\n", HttpTools.BR).trim();
+					audioInfo = AUDIO_HTTP_HEADER_PREFIX + audioInfo.trim().replace("\n", "\n" + AUDIO_HTTP_HEADER_PREFIX);
+					audioInfo = audioInfo.replace("\r", "").replace("\n", HttpTools.BR);
 					result.append(audioInfo).append(HttpTools.BR);
 				}
 			} catch (IOException ex) {
