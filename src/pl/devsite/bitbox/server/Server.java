@@ -79,14 +79,14 @@ public class Server implements Runnable {
 
     protected void protectedRun() throws IOException {
         try {
-			String addr = bitBoxConfiguration.getProperty(BitBoxConfiguration.PROPERTY_ADDR);
-			InetAddress inetAddress = addr == null ? null : InetAddress.getByName(addr);
-			server = inetAddress == null ? new ServerSocket(port) : new ServerSocket(port, 50, inetAddress);
-			while (started) {
+            String addr = bitBoxConfiguration.getProperty(BitBoxConfiguration.PROPERTY_ADDR);
+            InetAddress inetAddress = addr == null ? null : InetAddress.getByName(addr);
+            server = inetAddress == null ? new ServerSocket(port) : new ServerSocket(port, 50, inetAddress);
+            while (started) {
                 Socket client = server.accept();
                 //pool.execute(new ServerThread(server.accept(), sendableRoot));
                 Runnable t = null;
-                if (poolSize > 0 && (threadPool instanceof ThreadPoolExecutor) && (((ThreadPoolExecutor)threadPool).getActiveCount() >= poolSize - 1)) {
+                if (poolSize > 0 && (threadPool instanceof ThreadPoolExecutor) && (((ThreadPoolExecutor) threadPool).getActiveCount() >= poolSize - 1)) {
                     t = new ServerThread(client, get503());
                     logger.warning("max requests reached (" + poolSize + "), sending 503");
                 } else {
