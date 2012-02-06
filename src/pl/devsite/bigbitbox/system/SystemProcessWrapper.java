@@ -11,46 +11,27 @@ import java.util.logging.Logger;
  *
  * @author dmn
  */
-public class SystemProcessWrapper {
+public class SystemProcessWrapper extends SystemProcess {
 
-	private Process processHandle;
-	private PrintStream processIn;
-	//private BufferedReader processOutErr;
 	public static final String ERR_OUT = "err";
 	public static final String STD_OUT = "std";
 	private final Object listenerLock = new Object();
+	private PrintStream processPrintIn;
 
 	public SystemProcessWrapper(String processPath, String processOptions) throws IOException {
-		if (processHandle == null) {
-			String command = "" + processPath + " " + processOptions;
-			processHandle = Runtime.getRuntime().exec(command);
-			//PipedInputStream readFrom = new PipedInputStream(1024 * 1024);
-			//PipedOutputStream writeTo = new PipedOutputStream(readFrom);
-			//processOutErr = new BufferedReader(new InputStreamReader(readFrom));
-
-			new LineCapture(processHandle.getInputStream(), STD_OUT).start();
-			new LineCapture(processHandle.getErrorStream(), ERR_OUT).start();
-
-			processIn = new PrintStream(processHandle.getOutputStream());
-		}
+		super(processPath, processOptions);
+		initializeStreams();
 	}
 
 	public SystemProcessWrapper(String processPath, String[] processOptions) throws IOException {
-		if (processHandle == null) {
-			String[] array = new String[processOptions.length+1];
-			array[0] = processPath;
-			System.arraycopy(processOptions, 0, array, 1, processOptions.length);
-			processHandle = Runtime.getRuntime().exec(array);
-
-			new LineCapture(processHandle.getInputStream(), STD_OUT).start();
-			new LineCapture(processHandle.getErrorStream(), ERR_OUT).start();
-
-			processIn = new PrintStream(processHandle.getOutputStream());
-		}
+		super(processPath, processOptions);
+		initializeStreams();
 	}
 	
-	public void kill() {
-		processHandle.destroy();
+	private void initializeStreams() {		
+		new LineCapture(getProcessStd(), STD_OUT).start();
+		new LineCapture(getProcessErr(), ERR_OUT).start();		
+		processPrintIn = new PrintStream(getProcessIn());		
 	}
 
 	private String printAndWait(String property, String input, String expected) throws InterruptedException {
@@ -69,14 +50,9 @@ public class SystemProcessWrapper {
 	public String printAndWait(String input, String expected) throws InterruptedException {
 		return printAndWait(null, input, expected);
 	}
-
-	public SystemProcessWrapper flush() {
-		processIn.flush();
-		return this;
-	}
-
+	
 	public SystemProcessWrapper print(String value) {
-		processIn.print(value);
+		processPrintIn.print(value);
 		return this;
 	}
 	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
@@ -128,7 +104,10 @@ public class SystemProcessWrapper {
 
 		public String getResult() throws InterruptedException {
 			if (input != null) {
-				print(input).flush();
+				try {
+					flush();
+				} catch (IOException ex) {
+				}
 			}
 			int counter = 0;
 			synchronized (this) {
