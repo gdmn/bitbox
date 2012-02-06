@@ -46,6 +46,9 @@ public class BitBoxConfiguration extends Configuration {
 	public final static String PROPERTY_BIGBIT_ENABLED = "bigbit.enabled";
 	//--
 	public static final String PROPERTY_SOXI = "server.tools.soxi";
+	public static final String PROPERTY_FFMPEG = "server.tools.ffmpeg";
+	public static final String PROPERTY_LAME = "server.tools.lame";
+	public static final String PROPERTY_LAME_OPTIONS = "server.tools.lame.options";
 	//--
 	private static BitBoxConfiguration instance;
 
