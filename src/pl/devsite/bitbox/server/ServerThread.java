@@ -299,6 +299,7 @@ public class ServerThread implements Runnable {
 			sendUTF8(HttpTools.createHttpResponse(404, bitBoxConfiguration.getProperty(PROPERTY_NAME), true));
 		} else if (icyMetaData && !("audio/mpeg".equals(response.getMimeType()) 
 				 //|| "audio/ogg".equals(response.getMimeType())
+				|| "application/x-flac".equals(response.getMimeType())
 				|| (response.getMimeType() != null && response.getMimeType().startsWith("audio/"))
 				 )) {
 			logger.log(Level.WARNING, "streaming forbidden, invader: {0}", socket.getInetAddress().getHostAddress());
