@@ -105,6 +105,9 @@ public class Server implements Runnable {
     public void run() {
         try {
             protectedRun();
+        } catch (BindException ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
+            System.exit(1);
         } catch (SocketException ex) {
             if (started) {
                 logger.log(Level.SEVERE, ex.getMessage(), ex);

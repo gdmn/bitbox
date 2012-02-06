@@ -12,3 +12,4 @@ deprecated/*
 temp/*
 nbproject/*
 *.sh
+nbbuild.xml
