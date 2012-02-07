@@ -49,7 +49,7 @@ public class Server implements Runnable {
         }
 
         logger.log(Level.INFO, "Set server parameters: port={0}, pool={1}{2}", 
-                new Object[]{port, poolSize, bindAddr == null ? "" : ", bind=" + bindAddr.toString()});
+                new Object[]{""+port, ""+poolSize, bindAddr == null ? "" : ", bind=" + bindAddr.toString()});
         if (poolSize < 1 || poolSize > 300) {
             //threadPool = new ThreadPoolExecutor(0, 300, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
             threadPool = Executors.newCachedThreadPool();

@@ -1,6 +1,8 @@
 package pl.devsite.bigbitbox.system;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -14,18 +16,25 @@ public class SystemProcess {
 	private OutputStream processIn;
 	private InputStream processStd;
 	private InputStream processErr;
+	private String processName;
 
 	public SystemProcess(String processPath, String[] processOptions) throws IOException {
 		String[] array = new String[processOptions.length + 1];
 		array[0] = processPath;
 		System.arraycopy(processOptions, 0, array, 1, processOptions.length);
 		processHandle = Runtime.getRuntime().exec(array);
+		StringBuilder cmd = new StringBuilder();
+		for (String s : array) {
+			cmd.append(s).append(' ');
+		}
+		processName = cmd.length() > 0 ? cmd.substring(0, cmd.length() - 1) : null;
 		initializeStreams();
 	}
 
 	public SystemProcess(String processPath, String processOptions) throws IOException {
-		String command = "" + processPath + " " + processOptions;
+		String command = "" + processPath + (processOptions != null && !processOptions.isEmpty() ? " " + processOptions : "");
 		processHandle = Runtime.getRuntime().exec(command);
+		processName = command;
 		initializeStreams();
 	}
 
@@ -46,6 +55,12 @@ public class SystemProcess {
 	public SystemProcess flush() throws IOException {
 		processIn.flush();
 		return this;
+	}
+
+	@Override
+	public String toString() {
+		return (processName != null ? processName + " " : "")
+				+ (processHandle != null ? "(" + processHandle.toString() + ")" : "");
 	}
 
 	public static void pump(InputStream inputStream, OutputStream outputStream) throws IOException {

@@ -175,7 +175,7 @@ public class ServerThread implements Runnable {
 				encoder = new MusicEncoder();
 				encodedStream = encoder.encode(sf.getFile().getCanonicalPath());
 				if (encodedStream != null) {
-					logger.info("using audio encoder");
+					//logger.info("using audio encoder"); // in MusicEncoder
 					//in.close(); // closed in run() 
 					in = encodedStream;
 				}

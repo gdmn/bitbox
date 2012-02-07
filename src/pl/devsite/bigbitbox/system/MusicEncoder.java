@@ -1,6 +1,7 @@
 package pl.devsite.bigbitbox.system;
 
 import java.io.*;
+import java.util.logging.Logger;
 import pl.devsite.bitbox.server.BitBoxConfiguration;
 
 /**
@@ -9,7 +10,8 @@ import pl.devsite.bitbox.server.BitBoxConfiguration;
  */
 public class MusicEncoder {
 
-	BitBoxConfiguration bitBoxConfiguration = BitBoxConfiguration.getInstance();
+	private static final Logger logger = Logger.getLogger(MusicEncoder.class.getName());
+	private BitBoxConfiguration bitBoxConfiguration = BitBoxConfiguration.getInstance();
 	private SystemProcess ffmpeg, lame;
 
 	public MusicEncoder() {
@@ -20,14 +22,14 @@ public class MusicEncoder {
 			try {
 				ffmpeg.kill();
 			} catch (Exception e) {
-				System.out.println("exception killing ffmpeg");
+				logger.severe("exception killing ffmpeg: "+e.getMessage());
 			}
 		}
 		if (lame != null) {
 			try {
 				lame.kill();
 			} catch (Exception e) {
-				System.out.println("exception killing lame");
+				logger.severe("exception killing lame: "+e.getMessage());
 			}
 		}
 	}
@@ -68,11 +70,9 @@ public class MusicEncoder {
 		if (errorStream != null) {
 			SystemProcess.pumpBackground(ffmpeg.getProcessErr(), errorStream);
 			SystemProcess.pumpBackground(lame.getProcessErr(), errorStream);
-//		} else {
-//			errorStream = new ConsoleOutputStream(null);
-//			SystemProcess.pumpBackground(ffmpeg.getProcessErr(), errorStream);
-//			SystemProcess.pumpBackground(lame.getProcessErr(), errorStream);
 		}
+
+		logger.info("executing " + ffmpeg + " | " + lame);
 
 		return ffmpeg.pipeBackground(lame).getProcessStd();
 	}
