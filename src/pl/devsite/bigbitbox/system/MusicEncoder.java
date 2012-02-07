@@ -10,8 +10,26 @@ import pl.devsite.bitbox.server.BitBoxConfiguration;
 public class MusicEncoder {
 
 	BitBoxConfiguration bitBoxConfiguration = BitBoxConfiguration.getInstance();
+	private SystemProcess ffmpeg, lame;
 
 	public MusicEncoder() {
+	}
+
+	public void kill() {
+		if (ffmpeg != null) {
+			try {
+				ffmpeg.kill();
+			} catch (Exception e) {
+				System.out.println("exception killing ffmpeg");
+			}
+		}
+		if (lame != null) {
+			try {
+				lame.kill();
+			} catch (Exception e) {
+				System.out.println("exception killing lame");
+			}
+		}
 	}
 
 	public InputStream encode(String fileName) throws IOException {
@@ -36,22 +54,24 @@ public class MusicEncoder {
 			lameOptions[lameOptions.length - 2] = "-";
 			lameOptions[lameOptions.length - 1] = "-";
 		} else {
-			lameOptions = new String[]{"--preset", "radio", "-", "-"};
+			//lameOptions = "--preset radio - -".split(" ");
+			//lameOptions = "--preset cbr 96 - -".split(" ");
+			lameOptions = "-m j -q 7 --resample 44.1 -b 96 - -".split(" ");
 		}
-		SystemProcess ffmpeg = new SystemProcess(ffmpegPath, new String[]{
+		ffmpeg = new SystemProcess(ffmpegPath, new String[]{
 					"-i", fileName, "-f", "wav", "-"
 				});
 		//ffmpeg.getProcessIn().write(("q/n".getBytes()));
 
-		SystemProcess lame = new SystemProcess(lamePath, lameOptions);
+		lame = new SystemProcess(lamePath, lameOptions);
 
 		if (errorStream != null) {
 			SystemProcess.pumpBackground(ffmpeg.getProcessErr(), errorStream);
 			SystemProcess.pumpBackground(lame.getProcessErr(), errorStream);
-		} else {
-			errorStream = new ConsoleOutputStream(null);
-			SystemProcess.pumpBackground(ffmpeg.getProcessErr(), errorStream);
-			SystemProcess.pumpBackground(lame.getProcessErr(), errorStream);
+//		} else {
+//			errorStream = new ConsoleOutputStream(null);
+//			SystemProcess.pumpBackground(ffmpeg.getProcessErr(), errorStream);
+//			SystemProcess.pumpBackground(lame.getProcessErr(), errorStream);
 		}
 
 		return ffmpeg.pipeBackground(lame).getProcessStd();

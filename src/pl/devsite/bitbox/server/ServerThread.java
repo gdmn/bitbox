@@ -166,18 +166,21 @@ public class ServerThread implements Runnable {
 	private void sendIcyStream(InputStream in, Sendable sendable, int chunkSize) throws IOException {
 		int n;
 		boolean sendHeader = false;
+		InputStream encodedStream = null;
+		MusicEncoder encoder = null;
 		String name = sendable.toString();
 		if (sendable instanceof SendableFile) {
-			InputStream encodedStream;
 			SendableFile sf = (SendableFile) sendable;
 			try {
-				MusicEncoder encoder = new MusicEncoder();
+				encoder = new MusicEncoder();
 				encodedStream = encoder.encode(sf.getFile().getCanonicalPath());
 				if (encodedStream != null) {
-					in.close();
+					logger.info("using audio encoder");
+					//in.close(); // closed in run() 
 					in = encodedStream;
 				}
 			} catch (IOException e) {
+				encoder = null;
 				logger.severe("Could not initialize MusicEncoder " + e.getMessage());
 			}
 		}
@@ -228,6 +231,15 @@ public class ServerThread implements Runnable {
 			clientOut.write(fileBuffer, 0, chunkSize - lastWrote);
 			clientOut.write(0);
 		} finally {
+			if (encodedStream != null) {
+				try {
+					encodedStream.close();
+				} catch (Exception e) {
+				}
+			}
+			if (encoder != null) {
+				encoder.kill();
+			}
 		}
 	}
 	private Sendable response = null;
@@ -297,11 +309,10 @@ public class ServerThread implements Runnable {
 		} else if (response == null && (getRequest || headRequest)) {
 			logger.log(Level.WARNING, "not found: {0}, invader: {1}", new Object[]{stringRequest, socket.getInetAddress().getHostAddress()});
 			sendUTF8(HttpTools.createHttpResponse(404, bitBoxConfiguration.getProperty(PROPERTY_NAME), true));
-		} else if (icyMetaData && !("audio/mpeg".equals(response.getMimeType()) 
-				 //|| "audio/ogg".equals(response.getMimeType())
+		} else if (icyMetaData && !("audio/mpeg".equals(response.getMimeType())
+				//|| "audio/ogg".equals(response.getMimeType())
 				|| "application/x-flac".equals(response.getMimeType())
-				|| (response.getMimeType() != null && response.getMimeType().startsWith("audio/"))
-				 )) {
+				|| (response.getMimeType() != null && response.getMimeType().startsWith("audio/")))) {
 			logger.log(Level.WARNING, "streaming forbidden, invader: {0}", socket.getInetAddress().getHostAddress());
 			sendUTF8(HttpTools.createHttpResponse(403, bitBoxConfiguration.getProperty(PROPERTY_NAME), true));
 		} else if ((getRequest || headRequest) && response.hasChildren() && !stringRequest.isEmpty() && !stringRequest.endsWith("/")) {
