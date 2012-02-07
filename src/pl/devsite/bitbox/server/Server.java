@@ -25,20 +25,31 @@ public class Server implements Runnable {
     private boolean started;
     private BitBoxConfiguration bitBoxConfiguration = BitBoxConfiguration.getInstance();
     private Thread thread;
+    protected InetAddress bindAddr;
 
     public Server() {
         started = true;
     }
 
-    public Server(int port, int poolSize) {
+    public Server(int port, int poolSize, String bind) {
         this();
-        setParameters(port, poolSize);
+        setParameters(port, poolSize, bind);
     }
 
-    private void setParameters(int port, int poolSize) {
+    private void setParameters(int port, int poolSize, String bind) {
         this.port = port;
         this.poolSize = poolSize;
-        logger.log(Level.INFO, "Set server parameters: port="+port+", pool="+poolSize);
+        this.bindAddr = null;
+        if (bind != null) {
+            try {
+                this.bindAddr = InetAddress.getByName(bind);
+            } catch (UnknownHostException e) {
+                this.bindAddr = null;
+            }
+        }
+
+        logger.log(Level.INFO, "Set server parameters: port={0}, pool={1}{2}", 
+                new Object[]{port, poolSize, bindAddr == null ? "" : ", bind=" + bindAddr.toString()});
         if (poolSize < 1 || poolSize > 300) {
             //threadPool = new ThreadPoolExecutor(0, 300, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
             threadPool = Executors.newCachedThreadPool();
@@ -48,7 +59,6 @@ public class Server implements Runnable {
             threadPool = new ThreadPoolExecutor(poolSize, poolSize, 0, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
         }
     }
-
 
     public int getPort() {
         return port;
@@ -78,10 +88,8 @@ public class Server implements Runnable {
     }
 
     protected void protectedRun() throws IOException {
-        try {
-            String addr = bitBoxConfiguration.getProperty(BitBoxConfiguration.PROPERTY_ADDR);
-            InetAddress inetAddress = addr == null ? null : InetAddress.getByName(addr);
-            server = inetAddress == null ? new ServerSocket(port) : new ServerSocket(port, 50, inetAddress);
+        try {            
+            server = bindAddr == null ? new ServerSocket(port) : new ServerSocket(port, 50, bindAddr);
             while (started) {
                 Socket client = server.accept();
                 //pool.execute(new ServerThread(server.accept(), sendableRoot));

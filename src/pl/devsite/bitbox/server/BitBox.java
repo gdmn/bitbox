@@ -15,40 +15,41 @@ import static pl.devsite.bitbox.server.BitBoxConfiguration.*;
  */
 public class BitBox {
 
-	private static final Logger logger = Logger.getLogger(BitBox.class.getName());
+    private static final Logger logger = Logger.getLogger(BitBox.class.getName());
 
-	public static void main(String args[]) throws FileNotFoundException, IOException {
-		ConfigLog.apply();
-		Runtime.getRuntime().addShutdownHook(new Hook());
-		BitBoxConfiguration config = BitBoxConfiguration.getInstance();
-		BitBoxConfigurationListener listener = new BitBoxConfigurationListener(config);
-		config.addConfigurationChangeListener(listener);
-		boolean configRead = false;
-		//configRead = config.tryToLoadConfig(args);
-		configRead = config.getFile() != null;
-		Server bitBoxServer = new Server(Integer.parseInt(config.getProperty(PROPERTY_PORT)),
-				Integer.parseInt(config.getProperty(PROPERTY_POOLSIZE)));
+    public static void main(String args[]) throws FileNotFoundException, IOException {
+        ConfigLog.apply();
+        Runtime.getRuntime().addShutdownHook(new Hook());
+        BitBoxConfiguration config = BitBoxConfiguration.getInstance();
+        BitBoxConfigurationListener listener = new BitBoxConfigurationListener(config);
+        config.addConfigurationChangeListener(listener);
+        boolean configRead = false;
+        //configRead = config.tryToLoadConfig(args);
+        configRead = config.getFile() != null;
+        Server bitBoxServer = new Server(Integer.parseInt(config.getProperty(PROPERTY_PORT)),
+                Integer.parseInt(config.getProperty(PROPERTY_POOLSIZE)),
+                config.getProperty(BitBoxConfiguration.PROPERTY_ADDR));
 
-		if (!configRead && (args.length > 0)) {
-			int i = 0;
-			for (String path : args) {
-				File f = new File(path);
-				config.setProperty("share." + (i++) + ".path", f.getCanonicalPath());
-			}
-			config.notifyListeners();
-		}
-		bitBoxServer.startListening();
-		if (Configuration.str2boolean(config.getProperty(BitBoxConfiguration.PROPERTY_BIGBIT_ENABLED, "0"))) {
-			BigBitBoxClient.start();
-		}
-	}
+        if (!configRead && (args.length > 0)) {
+            int i = 0;
+            for (String path : args) {
+                File f = new File(path);
+                config.setProperty("share." + (i++) + ".path", f.getCanonicalPath());
+            }
+            config.notifyListeners();
+        }
+        bitBoxServer.startListening();
+        if (Configuration.str2boolean(config.getProperty(BitBoxConfiguration.PROPERTY_BIGBIT_ENABLED, "0"))) {
+            BigBitBoxClient.start();
+        }
+    }
 
-	private static class Hook extends Thread {
+    private static class Hook extends Thread {
 
-		public void run() {
-			System.out.println("Bye...");
-		}
-	}
+        public void run() {
+            System.out.println("Bye...");
+        }
+    }
 	/*
 	private final ArrayList<String> allowedIP = new ArrayList<String>();
 	private final ArrayList<String> allowedUsers = new ArrayList<String>();
