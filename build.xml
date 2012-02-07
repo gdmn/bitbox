@@ -23,7 +23,7 @@
 
 	<target name="copy-required-files">
 		<copy todir="${build}">
-			<fileset dir="${src}" includes="**/*.xsl,**/*.xml,**/*.properties,**/*.dtd,**/*.xls,**/*.xsd">
+			<fileset dir="${src}" includes="**/*.xsl,**/*.xml,**/*.properties,**/*.dtd,**/*.xls,**/*.xsd,**/*.types">
 				<exclude name="properties/*"/>
 			</fileset>
 		</copy>
