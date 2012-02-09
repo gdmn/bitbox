@@ -175,11 +175,12 @@ public class HttpTools {
 		}
 	}
 
-	public static String createIcecastResponse(String server, int chunkSize) {
+	public static String createIcecastResponse(String server, int chunkSize, Sendable sendable) {
 		StringBuilder result = new StringBuilder();
-		String[] greetingICY = new String[]{
+		String[] greetingMpeg = new String[]{
 			"ICY 200 OK",
 			"Cache-Control: no-cache",
+			"Content-Type: audio/mpeg",
 			"icy-notice1: <BR>This stream requires <a href=\"http://www.icecast.org/3rdparty.php\">a media player that support Icecast</a><BR>",
 			"icy-notice2: " + server + "<BR>",
 			"icy-name: " + server,
@@ -187,9 +188,37 @@ public class HttpTools {
 			//"icy-url: http://gdamian.ovh.org",
 			"icy-metaint: " + chunkSize,
 			"icy-pub: 1",};
+		String[] greetingOgg = new String[]{
+			"HTTP/1.0 200 OK",
+			"Cache-Control: no-cache",
+			"Content-Type: application/ogg",
+			"icy-notice1: <BR>This stream requires <a href=\"http://www.icecast.org/3rdparty.php\">a media player that support Icecast</a><BR>",
+			"icy-notice2: " + server + "<BR>",
+			"icy-name: " + server,
+			"icy-genre: various",
+			//"icy-url: http://gdamian.ovh.org",
+			//"icy-metaint: " + chunkSize,
+			"icy-pub: 1",};
+		BitBoxConfiguration config = BitBoxConfiguration.getInstance();
+		String encoder = config.getProperty(BitBoxConfiguration.PROPERTY_TOOLS_ENCODER);
+		String[] greetingICY = greetingMpeg;
+		if ("oggenc".equals(encoder)) {
+			greetingICY = greetingOgg;
+		}
 		for (String s : greetingICY) {
 			result.append(s + BR);
 		}
+		/*
+		 * 
+		String metadata;
+		if (sendable instanceof SendableFileWithMimeResolver) {
+			SendableFileWithMimeResolver sf = (SendableFileWithMimeResolver) sendable;
+			metadata = sf.getMetadata();
+			if (metadata != null) {
+				result.append(metadata).append(BR);
+			}
+		}
+		 */
 		return result.toString();
 	}
 
@@ -277,6 +306,20 @@ public class HttpTools {
 			result.append(availableChars[r.nextInt(16)]);
 		}
 		return result.toString();
+	}
+	
+	public static HashMap<String, String> headersToMap(String headers) {
+		HashMap<String, String> result = new HashMap<String, String>();
+		String[] lines = headers.split(HttpTools.BR);
+		for (String line : lines) {
+			int p = line.indexOf('=');
+			if (p >= 0 && p < line.length() - 1) {
+				String key_ = line.substring(0, p).trim().toLowerCase();
+				String value_ = line.substring(p + 1, line.length()).trim();
+				result.put(key_, value_);
+			}
+		}
+		return result;
 	}
 
 	public static String getDefaultCSS() {

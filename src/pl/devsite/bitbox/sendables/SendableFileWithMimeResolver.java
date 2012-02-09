@@ -51,16 +51,7 @@ public class SendableFileWithMimeResolver extends SendableFile {
 			return null;
 		}
 		if (metadataMap == null) {
-			String[] lines = metadata.split(HttpTools.BR);
-			metadataMap = new HashMap<String, String>();
-			for (String line : lines) {
-				int p = line.indexOf('=');
-				if (p >= 0 && p < line.length() - 1) {
-					String key_ = line.substring(0, p).trim().toLowerCase();
-					String value_ = line.substring(p + 1, line.length()).trim();
-					metadataMap.put(key_, value_);
-				}
-			}
+			metadataMap = HttpTools.headersToMap(metadata);
 		}
 		return metadataMap.get(key.toLowerCase());
 	}

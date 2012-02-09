@@ -45,10 +45,14 @@ public class BitBoxConfiguration extends Configuration {
 	public final static String PROPERTY_BIGBIT_SERVER_PORT = "bigbit.server.port";
 	public final static String PROPERTY_BIGBIT_ENABLED = "bigbit.enabled";
 	//--
-	public static final String PROPERTY_SOXI = "server.tools.soxi";
-	public static final String PROPERTY_FFMPEG = "server.tools.ffmpeg";
-	public static final String PROPERTY_LAME = "server.tools.lame";
-	public static final String PROPERTY_LAME_OPTIONS = "server.tools.lame.options";
+	/** lame, oggenc, none */
+	public static final String PROPERTY_TOOLS_ENCODER = "server.tools.encoder";
+	public static final String PROPERTY_TOOLS_SOXI = "server.tools.soxi";
+	public static final String PROPERTY_TOOLS_FFMPEG = "server.tools.ffmpeg";
+	public static final String PROPERTY_TOOLS_LAME = "server.tools.lame";
+	public static final String PROPERTY_TOOLS_OGGENC = "server.tools.oggenc";
+	public static final String PROPERTY_TOOLS_LAME_OPTIONS = "server.tools.lame.options";
+	public static final String PROPERTY_TOOLS_OGGENC_OPTIONS = "server.tools.oggenc.options";
 	//--
 	private static BitBoxConfiguration instance;
 

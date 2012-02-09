@@ -169,19 +169,23 @@ public class ServerThread implements Runnable {
 		InputStream encodedStream = null;
 		MusicEncoder encoder = null;
 		String name = sendable.toString();
+		boolean oggEncoder = "oggenc".equals(BitBoxConfiguration.getInstance().getProperty(BitBoxConfiguration.PROPERTY_TOOLS_ENCODER));
 		if (sendable instanceof SendableFile) {
 			SendableFile sf = (SendableFile) sendable;
 			try {
 				encoder = new MusicEncoder();
-				encodedStream = encoder.encode(sf.getFile().getCanonicalPath());
+				SendableFileWithMimeResolver sfm = null;
+				if (sendable instanceof SendableFileWithMimeResolver) {
+					sfm = (SendableFileWithMimeResolver) sendable;
+				}
+				encodedStream = sfm == null ? encoder.encode(sf.getFile().getCanonicalPath())
+						: encoder.encode(sf.getFile().getCanonicalPath(), sfm.getMetadata(), null);
 				if (encodedStream != null) {
-					//logger.info("using audio encoder"); // in MusicEncoder
-					//in.close(); // closed in run() 
 					in = encodedStream;
 				}
 			} catch (IOException e) {
 				encoder = null;
-				logger.severe("Could not initialize MusicEncoder " + e.getMessage());
+				logger.warning("Could not initialize MusicEncoder: " + e.getMessage());
 			}
 		}
 		if (sendable instanceof SendableFileWithMimeResolver) {
@@ -210,26 +214,32 @@ public class ServerThread implements Runnable {
 
 		byte[] fileBuffer = new byte[chunkSize];
 		try {
-			int lastWrote = 0;
-			while ((n = in.read(fileBuffer, 0, lastWrote < chunkSize ? chunkSize - lastWrote : chunkSize)) > 0) {
-				clientOut.write(fileBuffer, 0, n);
-				lastWrote += n;
-				while (lastWrote >= chunkSize) {
-					lastWrote -= chunkSize;
+			if (encoder != null && oggEncoder) {
+				while ((n = in.read(fileBuffer, 0, chunkSize)) > 0) {
+					clientOut.write(fileBuffer, 0, n);
 				}
-				if (lastWrote == 0) {
-					if (sendHeader) {
-						clientOut.write(0);
-					} else {
-						sendHeader = true;
-						sendIcyStreamTitle(name, chunkSize);
+			} else {
+				int lastWrote = 0;
+				while ((n = in.read(fileBuffer, 0, lastWrote < chunkSize ? chunkSize - lastWrote : chunkSize)) > 0) {
+					clientOut.write(fileBuffer, 0, n);
+					lastWrote += n;
+					while (lastWrote >= chunkSize) {
+						lastWrote -= chunkSize;
 					}
-				} else {
+					if (lastWrote == 0) {
+						if (sendHeader) {
+							clientOut.write(0);
+						} else {
+							sendHeader = true;
+							sendIcyStreamTitle(name, chunkSize);
+						}
+					} else {
+					}
 				}
+				Arrays.fill(fileBuffer, (byte) 0);
+				clientOut.write(fileBuffer, 0, chunkSize - lastWrote);
+				clientOut.write(0);
 			}
-			Arrays.fill(fileBuffer, (byte) 0);
-			clientOut.write(fileBuffer, 0, chunkSize - lastWrote);
-			clientOut.write(0);
 		} finally {
 			if (encodedStream != null) {
 				try {
@@ -311,7 +321,7 @@ public class ServerThread implements Runnable {
 			sendUTF8(HttpTools.createHttpResponse(404, bitBoxConfiguration.getProperty(PROPERTY_NAME), true));
 		} else if (icyMetaData && !("audio/mpeg".equals(response.getMimeType())
 				//|| "audio/ogg".equals(response.getMimeType())
-				|| "application/x-flac".equals(response.getMimeType())
+				//|| "application/x-flac".equals(response.getMimeType())
 				|| (response.getMimeType() != null && response.getMimeType().startsWith("audio/")))) {
 			logger.log(Level.WARNING, "streaming forbidden, invader: {0}", socket.getInetAddress().getHostAddress());
 			sendUTF8(HttpTools.createHttpResponse(403, bitBoxConfiguration.getProperty(PROPERTY_NAME), true));
@@ -347,13 +357,13 @@ public class ServerThread implements Runnable {
 		} else if (postRequest) {
 			receiveFile();
 		} else {
-			logger.log(Level.INFO, (icyMetaData ? "streaming" : "sending") + " \"" + stringRequest + "\" to " + socket.getInetAddress().getHostAddress() + (authenticatedUser == null ? "" : " - " + authenticatedUser));
+			logger.log(Level.INFO, (icyMetaData ? "streaming" : (headRequest ? "head" : "sending")) + " \"" + stringRequest + "\" to " + socket.getInetAddress().getHostAddress() + (authenticatedUser == null ? "" : " - " + authenticatedUser));
 //			}
 			BufferedInputStream bis = new BufferedInputStream(inputStream);
 //			if (getRequest || headRequest) {
 			boolean raw = response.isRawFile();
 			if (icyMetaData && raw) {
-				sendUTF8(HttpTools.createIcecastResponse(bitBoxConfiguration.getProperty(PROPERTY_NAME), 1024 * 16));
+				sendUTF8(HttpTools.createIcecastResponse(bitBoxConfiguration.getProperty(PROPERTY_NAME), 1024 * 16, response));
 			} else if (raw && response instanceof HasHtmlHeaders) {
 				sendUTF8(((HasHtmlHeaders) response).getHtmlHeader());
 			} else if (rangeStart != null || rangeStop != null) {

@@ -54,7 +54,7 @@ public class Soxi implements SystemProcessInterface<String>, SystemProcessCallba
 	}
 
 	private Soxi() throws InstantiationException {
-		command = BitBoxConfiguration.getInstance().getProperty(BitBoxConfiguration.PROPERTY_SOXI);
+		command = BitBoxConfiguration.getInstance().getProperty(BitBoxConfiguration.PROPERTY_TOOLS_SOXI);
 		if (command == null || command.isEmpty()) {
 			throw new InstantiationException("External command not found in properties");
 		}
