@@ -34,7 +34,7 @@ public class MusicEncoder {
 			try {
 				encode.kill();
 			} catch (Exception e) {
-				logger.severe("exception killing lame: " + e.getMessage());
+				logger.severe("exception killing encoder: " + e.getMessage());
 			}
 		}
 	}
@@ -51,10 +51,16 @@ public class MusicEncoder {
 		String encoder = BitBoxConfiguration.getInstance().getProperty(BitBoxConfiguration.PROPERTY_TOOLS_ENCODER);
 		boolean oggEncoder = "oggenc".equals(encoder);
 		boolean lameEncoder = "lame".equals(encoder);
-		if (!lameEncoder && !oggEncoder) {
+		boolean aacEncoder = false && "aac".equals(encoder); //disabled
+
+		if (!lameEncoder && !oggEncoder && !aacEncoder) {
 			return null;
 		}
 
+		String aacPath = bitBoxConfiguration.getProperty(BitBoxConfiguration.PROPERTY_TOOLS_AAC);
+		if ((!oggEncoder) && (aacPath == null || (new File(aacPath).canExecute() == false))) {
+			throw new IOException("No executable tool: neroAacEnc");
+		}
 		String lamePath = bitBoxConfiguration.getProperty(BitBoxConfiguration.PROPERTY_TOOLS_LAME);
 		if ((!oggEncoder) && (lamePath == null || (new File(lamePath).canExecute() == false))) {
 			throw new IOException("No executable tool: lame");
@@ -66,6 +72,18 @@ public class MusicEncoder {
 		String ffmpegPath = bitBoxConfiguration.getProperty(BitBoxConfiguration.PROPERTY_TOOLS_FFMPEG);
 		if (ffmpegPath == null || (new File(ffmpegPath).canExecute() == false)) {
 			throw new IOException("No executable tool: ffmpeg");
+		}
+
+		String propertyAacOptions = bitBoxConfiguration == null ? null : bitBoxConfiguration.getProperty(BitBoxConfiguration.PROPERTY_TOOLS_AAC_OPTIONS);
+		final String[] aacOptions;
+		if (propertyAacOptions != null) {
+			String array[] = propertyAacOptions.split(" ");
+			aacOptions = new String[array.length + 2];
+			System.arraycopy(array, 0, aacOptions, 2, array.length);
+			aacOptions[0] = "-";
+			aacOptions[1] = "-";
+		} else {
+			aacOptions = "- - 48".split(" ");
 		}
 
 		String propertyLameOptions = bitBoxConfiguration == null ? null : bitBoxConfiguration.getProperty(BitBoxConfiguration.PROPERTY_TOOLS_LAME_OPTIONS);
@@ -89,44 +107,24 @@ public class MusicEncoder {
 			ArrayList<String> result = new ArrayList<String>();
 			Map<String, String> tagMap = HttpTools.headersToMap(metaInf);
 			String pre = SendableFileWithMimeResolver.AUDIO_HTTP_HEADER_PREFIX.toLowerCase();
-			/*String album = tagMap.get(pre + "album");
-			String title = tagMap.get(pre + "title");
-			String artist = tagMap.get(pre + "artist");
-			String tracknum = tagMap.get(pre + "tracknumber");
-			tracknum = tracknum == null ? null : tagMap.get(pre + "track");
-			tracknum = tracknum == null ? null : tagMap.get(pre + "tracknum");
-			String date = tagMap.get(pre + "date");
-			String genre = tagMap.get(pre + "genre");
-			//String title = "a";String album="b"; String artist="c";String tracknum="99";String date="2000";String genre="something cool";
-			if (album != null) {
-				result.add("--album");
-				result.add(album);
+			/*
+			 * String album = tagMap.get(pre + "album"); String title = tagMap.get(pre + "title"); String artist =
+			 * tagMap.get(pre + "artist"); String tracknum = tagMap.get(pre + "tracknumber"); tracknum = tracknum ==
+			 * null ? null : tagMap.get(pre + "track"); tracknum = tracknum == null ? null : tagMap.get(pre +
+			 * "tracknum"); String date = tagMap.get(pre + "date"); String genre = tagMap.get(pre + "genre"); //String
+			 * title = "a";String album="b"; String artist="c";String tracknum="99";String date="2000";String
+			 * genre="something cool"; if (album != null) { result.add("--album"); result.add(album); } if (title !=
+			 * null) { result.add("--title"); result.add(title); } if (artist != null) { result.add("--artist");
+			 * result.add(artist); } if (tracknum != null) { result.add("--tracknum"); result.add(tracknum); } if (date
+			 * != null) { result.add("--date"); result.add(date); } if (genre != null) { result.add("--genre");
+			 * result.add(genre);
 			}
-			if (title != null) {
-				result.add("--title");
-				result.add(title);
-			}
-			if (artist != null) {
-				result.add("--artist");
-				result.add(artist);
-			}
-			if (tracknum != null) {
-				result.add("--tracknum");
-				result.add(tracknum);
-			}
-			if (date != null) {
-				result.add("--date");
-				result.add(date);
-			}
-			if (genre != null) {
-				result.add("--genre");
-				result.add(genre);
-			}*/
-			for (Entry<String,String> entry : tagMap.entrySet()) {
+			 */
+			for (Entry<String, String> entry : tagMap.entrySet()) {
 				if (entry.getKey().startsWith(pre)) {
 					result.add("-c");
-					result.add(entry.getKey().substring(pre.length())+
-							"="+entry.getValue());					
+					result.add(entry.getKey().substring(pre.length())
+							+ "=" + entry.getValue());
 				}
 			}
 			tag = result;
@@ -151,7 +149,13 @@ public class MusicEncoder {
 				});
 		//ffmpeg.getProcessIn().write(("q/n".getBytes()));
 
-		encode = lameEncoder ? new SystemProcess(lamePath, lameOptions) : new SystemProcess(oggencPath, oggencOptions);
+		if (lameEncoder) {
+			encode = new SystemProcess(lamePath, lameOptions);
+		} else if (oggEncoder) {
+			encode = new SystemProcess(oggencPath, oggencOptions);
+		} else if (aacEncoder) {
+			encode = new SystemProcess(aacPath, aacOptions);
+		}
 
 		if (errorStream != null) {
 			SystemProcess.pumpBackground(ffmpeg.getProcessErr(), errorStream);
@@ -183,7 +187,7 @@ public class MusicEncoder {
 
 		public static void main(String[] args) throws IOException, InterruptedException, Exception {
 			try {
-				File outputFile = new File("/tmp/a.java.mp3");
+				File outputFile = new File("/tmp/a.java");
 				FileOutputStream file = new FileOutputStream(outputFile);
 
 				OutputStream errorStream = new ConsoleOutputStream(null);

@@ -51,8 +51,10 @@ public class BitBoxConfiguration extends Configuration {
 	public static final String PROPERTY_TOOLS_FFMPEG = "server.tools.ffmpeg";
 	public static final String PROPERTY_TOOLS_LAME = "server.tools.lame";
 	public static final String PROPERTY_TOOLS_OGGENC = "server.tools.oggenc";
+	public static final String PROPERTY_TOOLS_AAC = "server.tools.aac";
 	public static final String PROPERTY_TOOLS_LAME_OPTIONS = "server.tools.lame.options";
 	public static final String PROPERTY_TOOLS_OGGENC_OPTIONS = "server.tools.oggenc.options";
+	public static final String PROPERTY_TOOLS_AAC_OPTIONS = "server.tools.aac.options";
 	//--
 	private static BitBoxConfiguration instance;
 
