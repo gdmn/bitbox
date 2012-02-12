@@ -56,15 +56,15 @@ public class SendableFileWithMimeResolver extends SendableFile implements MetaDa
 					audioInfo = Soxi.query(getFile().getCanonicalPath());
 					if (audioInfo != null) {
 						audioInfo = AUDIO_HTTP_HEADER_PREFIX + audioInfo.trim().replace("\n", "\n" + AUDIO_HTTP_HEADER_PREFIX);
-						audioInfo = audioInfo.replace("\r", "").replace("\n", HttpTools.BR);
-						result.append(audioInfo).append(HttpTools.BR);
+						audioInfo = audioInfo.replace("\r", "").replace("\n", HttpTools.RN);
+						result.append(audioInfo).append(HttpTools.RN);
 					}
 				} catch (IOException ex) {
 					Logger.getLogger(HttpTools.class.getName()).log(Level.SEVERE, null, ex);
 				}
 			}
 			if (result.length() > 0) {
-				metaData = new MetaData.Provider(result.substring(0, result.length() - HttpTools.BR.length()));
+				metaData = new MetaData.Provider(result.substring(0, result.length() - HttpTools.RN.length()));
 			} else {
 				metaData = new MetaData.Provider(null);
 			}

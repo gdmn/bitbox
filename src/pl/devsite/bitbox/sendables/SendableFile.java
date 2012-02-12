@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import pl.devsite.bitbox.server.HtmlLister;
+import pl.devsite.bitbox.server.renderers.HtmlLister;
 
 public class SendableFile extends SendableAdapter {
 
@@ -58,10 +58,10 @@ public class SendableFile extends SendableAdapter {
 		}
 	}
 
-	@Override
-	public boolean isRawFile() {
-		return !file.isDirectory();
-	}
+//	@Override
+//	public boolean isRawFile() {
+//		return !file.isDirectory();
+//	}
 
 	@Override
 	public boolean hasChildren() {
@@ -131,5 +131,5 @@ public class SendableFile extends SendableAdapter {
 	public File getFile() {
 		return file;
 	}
-	
+
 }

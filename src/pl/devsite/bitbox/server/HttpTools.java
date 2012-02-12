@@ -14,7 +14,7 @@ import pl.devsite.bitbox.sendables.SendableFileWithMimeResolver;
  */
 public class HttpTools {
 
-	public static final String BR = "\r\n";
+	public static final String RN = "\r\n";
 	public static final String CONNECTION = "Connection";
 	public static final String CONTENTLENGTH = "Content-Length";
 	public static final String CONTENTTYPE = "Content-Type";
@@ -32,7 +32,7 @@ public class HttpTools {
 	public static final String REFERER = "Referer";
 	public static final String HOST = "Host";
 	public static final String ICYMETADATA = "Icy-MetaData";
-	public static final String XHTMLHEADER = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">" + BR
+	public static final String XHTMLHEADER = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">" + RN
 			+ "<html xmlns=\"http://www.w3.org/1999/xhtml\">";
 	public static final String CONTENTTYPE_TEXT_HTML = "text/html";
 	public static final HttpAuthenticator NULLAUTHENTICATOR = new HttpAuthenticator() {
@@ -56,7 +56,7 @@ public class HttpTools {
 	public static String createHttpResponse(int code, String server, long contentLength, String contentType, String body) {
 		StringBuilder result = new StringBuilder(createHttpResponse(code, server, contentLength, contentType));
 		if (body != null) {
-			result.append(BR + body);
+			result.append(RN + body);
 		}
 		return result.toString();
 	}
@@ -69,13 +69,13 @@ public class HttpTools {
 		if (message == null) {
 			message = "No information";
 		}
-		result.append(message + BR);
-		result.append(CONNECTION + COLONSPACE + "close" + BR);
+		result.append(message + RN);
+		result.append(CONNECTION + COLONSPACE + "close" + RN);
 		if (server != null) {
-			result.append(SERVER + COLONSPACE + server + BR);
+			result.append(SERVER + COLONSPACE + server + RN);
 		}
 		if (contentType != null) {
-			result.append(CONTENTTYPE + COLONSPACE + contentType + BR);
+			result.append(CONTENTTYPE + COLONSPACE + contentType + RN);
 		}
 		if (rangeStart < 0) {
 			rangeStart = 0;
@@ -83,8 +83,8 @@ public class HttpTools {
 		if (rangeStop < 0 || rangeStop > contentLength - 1) {
 			rangeStop = contentLength - 1;
 		}
-		result.append(CONTENTRANGE + COLONSPACE + "bytes " + (rangeStart < 0 ? "" : rangeStart) + "-" + (rangeStop < 0 ? "" : rangeStop) + "/" + contentLength + BR);
-		result.append(CONTENTLENGTH + COLONSPACE + (rangeStop - rangeStart + 1) + BR);
+		result.append(CONTENTRANGE + COLONSPACE + "bytes " + (rangeStart < 0 ? "" : rangeStart) + "-" + (rangeStop < 0 ? "" : rangeStop) + "/" + contentLength + RN);
+		result.append(CONTENTLENGTH + COLONSPACE + (rangeStop - rangeStart + 1) + RN);
 		return result.toString();
 	}
 
@@ -98,7 +98,7 @@ public class HttpTools {
 			SendableFileWithMimeResolver sf = (SendableFileWithMimeResolver) sendable;
 			metadata = sf.getMetadata();
 			if (metadata != null) {
-				result.append(metadata).append(BR);
+				result.append(metadata).append(RN);
 			}
 		}
 		return result.toString();
@@ -112,18 +112,18 @@ public class HttpTools {
 		if (message == null) {
 			message = "No information";
 		}
-		result.append(message + BR);
-		result.append(CONNECTION + COLONSPACE + "close" + BR);
+		result.append(message + RN);
+		result.append(CONNECTION + COLONSPACE + "close" + RN);
 		if (server != null) {
-			result.append(SERVER + COLONSPACE + server + BR);
+			result.append(SERVER + COLONSPACE + server + RN);
 		}
 		if (contentLength > -1) {
-			result.append(CONTENTLENGTH + COLONSPACE + contentLength + BR);
+			result.append(CONTENTLENGTH + COLONSPACE + contentLength + RN);
 		}
 		if (contentType != null) {
-			result.append(CONTENTTYPE + COLONSPACE + contentType + BR);
+			result.append(CONTENTTYPE + COLONSPACE + contentType + RN);
 		}
-		result.append(ACCEPTRANGES + COLONSPACE + "bytes" + BR);
+		result.append(ACCEPTRANGES + COLONSPACE + "bytes" + RN);
 		return result.toString();
 	}
 
@@ -135,10 +135,10 @@ public class HttpTools {
 		if (message == null) {
 			message = "No information";
 		}
-		result.append(message + BR);
+		result.append(message + RN);
 		if (headerValues != null) {
 			for (String[] value : headerValues) {
-				result.append(value[0] + COLONSPACE + value[1] + BR);
+				result.append(value[0] + COLONSPACE + value[1] + RN);
 			}
 		}
 		return result.toString();
@@ -152,14 +152,14 @@ public class HttpTools {
 		if (message == null) {
 			message = "No information";
 		}
-		result.append(message + BR);
+		result.append(message + RN);
 		if (headerValues != null) {
 			boolean start = true;
 			for (String value : headerValues) {
 				if (start) {
 					result.append(value + COLONSPACE);
 				} else {
-					result.append(value + BR);
+					result.append(value + RN);
 				}
 				start = !start;
 			}
@@ -206,7 +206,7 @@ public class HttpTools {
 			greetingICY = greetingOgg;
 		}
 		for (String s : greetingICY) {
-			result.append(s + BR);
+			result.append(s + RN);
 		}
 		/*
 		 * 
@@ -228,7 +228,7 @@ public class HttpTools {
 //        }
 		StringBuilder builder = new StringBuilder();
 		for (String s : text) {
-			builder.append(s + BR);
+			builder.append(s + RN);
 		}
 		return builder.toString();
 	}
@@ -310,7 +310,7 @@ public class HttpTools {
 	
 	public static HashMap<String, String> headersToMap(String headers) {
 		HashMap<String, String> result = new HashMap<String, String>();
-		String[] lines = headers.split(HttpTools.BR);
+		String[] lines = headers.split(HttpTools.RN);
 		for (String line : lines) {
 			int p = line.indexOf('=');
 			if (p >= 0 && p < line.length() - 1) {

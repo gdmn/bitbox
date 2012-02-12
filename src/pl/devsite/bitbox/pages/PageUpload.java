@@ -10,7 +10,7 @@ import static pl.devsite.bitbox.server.HttpTools.CONTENTTYPE_TEXT_HTML;
  */
 public class PageUpload extends SendableString {
 
-    private static final String data = 
+    private static final String data =
             "<h3>Upload</h3>" +
             "<p>The browser will not display any progress bar. Please be patient.<br/>When done, a message will be displayed.</p>" +
             "<form action=\"/\" method=\"post\" enctype=\"multipart/form-data\">" +
@@ -21,15 +21,10 @@ public class PageUpload extends SendableString {
             "<input type=\"submit\" value=\"Send\" />" +
             "</p></form>" +
             "";
-    
+
 
     public PageUpload(Sendable parent, String name) {
         super(parent, name, CONTENTTYPE_TEXT_HTML, data);
-    }
-
-    @Override
-    public boolean isRawFile() {
-        return false;
     }
 
     @Override

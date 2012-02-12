@@ -9,12 +9,12 @@ public interface Sendable {
 
     String getAddress();
     InputStream getResponseStream();
-    /** http://www.iana.org/assignments/media-types/ 
+    /** http://www.iana.org/assignments/media-types/
      * http://www.webmaster-toolkit.com/mime-types.shtml
      */
     String getMimeType();
     long getContentLength();
-    boolean isRawFile();
+    
     int getAttributes();
     HttpAuthenticator getAuthenticator();
     boolean hasChildren();

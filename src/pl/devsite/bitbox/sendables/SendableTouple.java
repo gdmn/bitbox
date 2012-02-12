@@ -1,5 +1,6 @@
 package pl.devsite.bitbox.sendables;
 
+import pl.devsite.bitbox.server.renderers.HtmlLister;
 import pl.devsite.bitbox.server.*;
 import java.io.InputStream;
 
@@ -31,10 +32,10 @@ public class SendableTouple extends SendableAdapter {
         return -1;
     }
 
-    @Override
-    public boolean isRawFile() {
-        return false;
-    }
+//    @Override
+//    public boolean isRawFile() {
+//        return false;
+//    }
 
     @Override
     public boolean hasChildren() {

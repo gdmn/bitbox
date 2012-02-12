@@ -12,8 +12,8 @@ import java.io.InputStream;
  *
  * @author dmn
  */
-public abstract class ServletAdapter extends SendableAdapter implements Servlet {
-
+public abstract class ServletAdapter  {
+/*
     protected InputStream requestContentStream;
     //protected String requestHeader;
     protected String requestContent;
@@ -71,4 +71,5 @@ public abstract class ServletAdapter extends SendableAdapter implements Servlet 
         }
         return requestContent;
     }
+	*/
 }

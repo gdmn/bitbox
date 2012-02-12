@@ -1,6 +1,5 @@
 package pl.devsite.bitbox.server;
 
-import pl.devsite.bitbox.sendables.SendableError;
 import java.io.IOException;
 import java.net.*;
 import java.util.concurrent.ExecutorService;
@@ -10,6 +9,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import pl.devsite.bitbox.sendables.Sendable;
 
 /**
  *
@@ -48,7 +48,7 @@ public class Server implements Runnable {
             }
         }
 
-        logger.log(Level.INFO, "Set server parameters: port={0}, pool={1}{2}", 
+        logger.log(Level.INFO, "Set server parameters: port={0}, pool={1}{2}",
                 new Object[]{""+port, ""+poolSize, bindAddr == null ? "" : ", bind=" + bindAddr.toString()});
         if (poolSize < 1 || poolSize > 300) {
             //threadPool = new ThreadPoolExecutor(0, 300, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
@@ -79,25 +79,26 @@ public class Server implements Runnable {
         }
     }
 
-    public static SendableError get503() {
-        SendableError s_503 = new SendableError(null, "error", 503, new String[][]{
-                    {HttpTools.SERVER, BitBoxConfiguration.getInstance().getProperty(BitBoxConfiguration.PROPERTY_NAME)},
-                    {HttpTools.CONTENTTYPE, HttpTools.CONTENTTYPE_TEXT_HTML},
-                    {HttpTools.RETRYAFTER, "10"},});
-        return s_503;
-    }
+//    public static Sendable get503() {
+//        SendableError s_503 = new SendableError(null, "error", 503, new String[][]{
+//                    {HttpTools.SERVER, BitBoxConfiguration.getInstance().getProperty(BitBoxConfiguration.PROPERTY_NAME)},
+//                    {HttpTools.CONTENTTYPE, HttpTools.CONTENTTYPE_TEXT_HTML},
+//                    {HttpTools.RETRYAFTER, "10"},});
+//        return s_503;
+//    }
 
     protected void protectedRun() throws IOException {
-        try {            
+        try {
             server = bindAddr == null ? new ServerSocket(port) : new ServerSocket(port, 50, bindAddr);
             while (started) {
                 Socket client = server.accept();
                 //pool.execute(new ServerThread(server.accept(), sendableRoot));
                 Runnable t = null;
-                if (poolSize > 0 && (threadPool instanceof ThreadPoolExecutor) && (((ThreadPoolExecutor) threadPool).getActiveCount() >= poolSize - 1)) {
-                    t = new ServerThread(client, get503());
-                    logger.warning("max requests reached (" + poolSize + "), sending 503");
-                } else {
+//                if (poolSize > 0 && (threadPool instanceof ThreadPoolExecutor) && (((ThreadPoolExecutor) threadPool).getActiveCount() >= poolSize - 1)) {
+//                    t = new ServerThread(client, get503());
+//                    logger.warning("max requests reached (" + poolSize + "), sending 503");
+//                } else
+				{
                     t = new ServerThread(client, bitBoxConfiguration.getSendableRoot());
                 }
                 threadPool.execute(t);

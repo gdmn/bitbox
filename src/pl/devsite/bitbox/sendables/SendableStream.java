@@ -55,11 +55,11 @@ public class SendableStream extends SendableAdapter {
 //    protected void setContentLength(long lengthOfStream) {
 //        this.lengthOfStream = lengthOfStream;
 //    }
-
-    @Override
-    public boolean isRawFile() {
-        return true;
-    }
+//
+//    @Override
+//    public boolean isRawFile() {
+//        return true;
+//    }
 
     @Override
     public boolean hasChildren() {
