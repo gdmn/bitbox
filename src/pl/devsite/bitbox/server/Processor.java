@@ -78,9 +78,9 @@ public class Processor {
 			responseHeader.setHttpResponseCode(403);
 			response = SendableTemplates.SIMPLE.create(responseHeader);
 		} else if ((context.isGetRequest() || context.isHeadRequest()) && potentialResponse.hasChildren() && !context.getStringRequest().isEmpty() && !context.getStringRequest().endsWith("/")) {
-			logger.log(Level.INFO, "redirecting to /{0}/", context.getStringRequest());
+			logger.log(Level.INFO, "redirecting to {0}/", context.getStringRequest());
 			responseHeader.setHttpResponseCode(301);
-			responseHeader.add(HttpTools.LOCATION, "/" + context.getStringRequest() + "/");
+			responseHeader.add(HttpTools.LOCATION, "" + context.getStringRequest() + "/");
 		} else if ((context.isGetRequest() || context.isHeadRequest()) && potentialResponse.getFilter() != null && !potentialResponse.getFilter().isAllowed(potentialResponse, context.getHostAddress(), context.getAuthenticatedUser())) {
 			logger.log(Level.WARNING, "not allowed, invader: {0}", context.getHostAddress());
 			responseHeader.setHttpResponseCode(403);

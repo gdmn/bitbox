@@ -51,17 +51,17 @@ public class Router {
 		if (context.isPostRequest()) {
 			//receiveFile();
 		} else {
-			logger.log(Level.INFO, (context.isIcyMetadata() ? "streaming" : (context.isHeadRequest() ? "head" : "sending")) + " \"" + context.getStringRequest() + "\" to " + context.getHostAddress() + (context.getAuthenticatedUser() == null ? "" : " - " + context.getAuthenticatedUser()));
+			//logger.log(Level.INFO, (context.isIcyMetadata() ? "streaming" : (context.isHeadRequest() ? "head" : "sending")) + " \"" + context.getStringRequest() + "\" to " + context.getHostAddress() + (context.getAuthenticatedUser() == null ? "" : " - " + context.getAuthenticatedUser()));
 //			}
-			BufferedInputStream bis = new BufferedInputStream(context.getResponseStream());
 			Sendable response = context.getSendableResponse();
 			HttpHeader header = context.getResponseHeader();
-			if (context.isIcyMetadata()) {
+			if (context.isIcyMetadata() && (header.getHttpResponseCode() == 200 || header.getHttpResponseCode() == 0)) {
 				String encoder = config.getProperty(BitBoxConfiguration.PROPERTY_TOOLS_ENCODER);
+				header.setHttpResponseCode(200);
 				if ("lame".equals(encoder)) {
 					header.appendContentType("audio/mpeg").appendIcyMetaint("" + IcyRenderer.CHUNK_SIZE).setFirstLineOfResponse("ICY 200 OK");
 				} else {
-					header.appendContentType("application/ogg").setHttpResponseCode(200);
+					header.appendContentType("application/ogg");
 				}
 				header.appendNoCache().appendIcyNotice(
 						"<BR>This stream requires <a href=\"http://www.icecast.org/3rdparty.php\">a media player that support Icecast</a><BR>",
@@ -77,7 +77,9 @@ public class Router {
 			} else {
 				header.appendConnectionClose();
 				header.appendServer();
-				header.appendContentType(response.getMimeType());
+				if (response != null) {
+					header.appendContentType(response.getMimeType());
+				}
 				if (header.getHttpResponseCode() < 1) {
 					header.setHttpResponseCode(200);
 				}
@@ -95,12 +97,14 @@ public class Router {
 			//sendUTF8(header.toString());
 
 			if (context.isGetRequest()) {
-				if (context.isIcyMetadata()) {
+				if (context.isIcyMetadata() && context.getResponseHeader().getHttpResponseCode() == 200) {
 					renderer = new IcyRenderer(context);
 					//sendIcyStream(bis, response, 1024 * 16);
 				} else {
-					if (response.getContentLength() > 0 && context.getRangeStop() == null) {
-						context.setRangeStop(new Integer((int) response.getContentLength() - 1));
+					if (response != null) {
+						if (response.getContentLength() > 0 && context.getRangeStop() == null) {
+							context.setRangeStop(new Integer((int) response.getContentLength() - 1));
+						}
 					}
 					renderer = new Renderer(context);
 					//sendStream(bis, context.getRangeStart(), context.getRangeStop());

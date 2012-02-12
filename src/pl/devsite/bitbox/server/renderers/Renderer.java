@@ -2,6 +2,8 @@ package pl.devsite.bitbox.server.renderers;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import pl.devsite.bitbox.server.RequestContext;
 
 /**
@@ -10,6 +12,7 @@ import pl.devsite.bitbox.server.RequestContext;
  */
 public class Renderer {
 
+	private static final Logger logger = Logger.getLogger(Renderer.class.getName());
 	protected RequestContext context;
 
 	public Renderer(RequestContext context) {
@@ -17,15 +20,36 @@ public class Renderer {
 	}
 
 	public void send() throws IOException {
-		byte[] headerBytes = (context.getResponseHeader().toString() + "\r\n").getBytes();
-		write(headerBytes, 0, headerBytes.length);
-		if (context.getResponseStream() != null) {
-			sendStream(context.getResponseStream(), context.getRangeStart(), context.getRangeStop());
+		sendHeader();
+		if (context.isGetRequest()) {
+			if (context.getResponseStream() != null) {
+				sendStream(context.getResponseStream(), context.getRangeStart(), context.getRangeStop());
+			}
 		}
 	}
 
-	private void write(byte[] buf, int off, int len) throws IOException {
-		//System.out.println("> " + new String(buf, off, len));
+	protected void sendHeader() throws IOException {
+		//logger.log(Level.INFO, (context.isIcyMetadata() ? "streaming" : (context.isHeadRequest() ? "head" : "sending")) + " \"" + context.getStringRequest() + "\" to " + context.getHostAddress() + (context.getAuthenticatedUser() == null ? "" : " - " + context.getAuthenticatedUser()));
+		if (context.getResponseHeader().getHttpResponseCode() == 200) {
+			String sendingTo = " to " + context.getHostAddress() + (context.getAuthenticatedUser() == null ? "" : " - " + context.getAuthenticatedUser());
+			String sendingOp;
+			if (context.isHeadRequest()) {
+				sendingOp = "head ";
+			} else if (context.isIcyMetadata()) {
+				sendingOp = "streaming ";
+			} else {
+				sendingOp = "sending ";
+			}
+			logger.log(Level.INFO, sendingOp + "\"" + context.getStringRequest() + "\"" + sendingTo);
+		}
+		byte[] headerBytes = (context.getResponseHeader().toString() + "\r\n").getBytes();
+		if (headerBytes != null && headerBytes.length > 0) {
+			write(headerBytes, 0, headerBytes.length);
+		}
+	}
+
+	protected void write(byte[] buf, int off, int len) throws IOException {
+		//System.out.println("" + new String(buf, off, len));
 		context.getClientOut().write(buf, off, len);
 
 	}

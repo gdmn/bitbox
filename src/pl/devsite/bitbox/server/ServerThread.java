@@ -39,10 +39,19 @@ public class ServerThread implements Runnable {
 			router = new Router(context);
 			router.getRenderer().send();
 
-		} catch (SocketException ex) {
-			logger.log(Level.SEVERE, ex.getMessage());
-		} catch (IOException ex) {
-			logger.log(Level.SEVERE, ex.getMessage(), ex);
+		} catch (Exception ex) {
+			String m = "";
+			StackTraceElement[] stackTrace = ex.getStackTrace();
+			String err = "";
+			if (stackTrace != null && stackTrace.length > 1) {
+				for (int i = stackTrace.length-1; i >=0; i--) {
+					if (stackTrace[i].getClassName().startsWith("pl.devsite.")) {
+						err = " @" + stackTrace[i].toString();
+					}
+				}
+			}
+			m = m + err;
+			logger.log(Level.SEVERE, ex.toString() + m, ex);
 		} finally {
 			if (context != null) {
 				if (context.getClientOut() != null) {

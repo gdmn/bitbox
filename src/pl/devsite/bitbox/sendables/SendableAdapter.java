@@ -25,15 +25,22 @@ public abstract class SendableAdapter implements Sendable {
         if (name != null) {
             String result;
             if (getParent() != null) {
-                result = getParent().getAddress() + "/";
+				if (getParent() instanceof SendableRoot) {
+					result = "/";
+				} else {
+					result = getParent().getAddress();
+				}
             } else {
                 result = "";
             }
             //result = result + EncodingTools.urlEncodeUTF(name);
             result = result + name;
-            return result;
-        }
-        return null;
+			if (hasChildren()) {
+				result = result + "/";
+			}
+			return result;
+		}
+		return null;
     }
 
     @Override

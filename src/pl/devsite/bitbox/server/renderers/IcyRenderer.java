@@ -26,7 +26,11 @@ public class IcyRenderer extends Renderer {
 
 	@Override
 	public void send() throws IOException {
-		super.send();
+		//super.send();
+		sendHeader();
+		if (context.getResponseStream() != null) {
+			sendIcyStream();
+		}
 	}
 
 	private void sendIcyStreamTitle(String title, int chunkSize) throws IOException {
@@ -41,9 +45,11 @@ public class IcyRenderer extends Renderer {
 		context.getClientOut().write(fileBuffer, 0, dlugosc * 16 + 1);
 	}
 
-	private void sendIcyStream(InputStream in, Sendable sendable, int chunkSize) throws IOException {
+	private void sendIcyStream() throws IOException {
 		int n;
 		boolean sendHeader = false;
+		InputStream in = context.getResponseStream();
+		Sendable sendable = context.getSendableResponse();
 		InputStream encodedStream = null;
 		MusicEncoder encoder = null;
 		String name = sendable.toString();
@@ -90,32 +96,32 @@ public class IcyRenderer extends Renderer {
 			}
 		}
 
-		byte[] fileBuffer = new byte[chunkSize];
+		byte[] fileBuffer = new byte[CHUNK_SIZE];
 		try {
 			if (encoder != null && oggEncoder) {
-				while ((n = in.read(fileBuffer, 0, chunkSize)) > 0) {
+				while ((n = in.read(fileBuffer, 0, CHUNK_SIZE)) > 0) {
 					context.getClientOut().write(fileBuffer, 0, n);
 				}
 			} else {
 				int lastWrote = 0;
-				while ((n = in.read(fileBuffer, 0, lastWrote < chunkSize ? chunkSize - lastWrote : chunkSize)) > 0) {
+				while ((n = in.read(fileBuffer, 0, lastWrote < CHUNK_SIZE ? CHUNK_SIZE - lastWrote : CHUNK_SIZE)) > 0) {
 					context.getClientOut().write(fileBuffer, 0, n);
 					lastWrote += n;
-					while (lastWrote >= chunkSize) {
-						lastWrote -= chunkSize;
+					while (lastWrote >= CHUNK_SIZE) {
+						lastWrote -= CHUNK_SIZE;
 					}
 					if (lastWrote == 0) {
 						if (sendHeader) {
 							context.getClientOut().write(0);
 						} else {
 							sendHeader = true;
-							sendIcyStreamTitle(name, chunkSize);
+							sendIcyStreamTitle(name, CHUNK_SIZE);
 						}
 					} else {
 					}
 				}
 				Arrays.fill(fileBuffer, (byte) 0);
-				context.getClientOut().write(fileBuffer, 0, chunkSize - lastWrote);
+				context.getClientOut().write(fileBuffer, 0, CHUNK_SIZE - lastWrote);
 				context.getClientOut().write(0);
 			}
 		} finally {

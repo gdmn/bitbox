@@ -38,7 +38,7 @@ public enum SendableTemplates {
 		if (codeMsg == null) {
 			codeMsg = "";
 		}
-		text = text.replace("$codemsg$", codeMsg);
+		text = text.replace("$codemessage$", codeMsg);
 		text = text.replace("$server$", config.getProperty(BitBoxConfiguration.PROPERTY_NAME));
 		return text;
 	}

@@ -1,6 +1,5 @@
 package pl.devsite.bitbox.server.renderers;
 
-import java.io.BufferedOutputStream;
 import pl.devsite.bitbox.sendables.Sendable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,8 +9,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
+import pl.devsite.bitbox.sendables.SendableRoot;
 import pl.devsite.bitbox.server.BitBoxConfiguration;
-import pl.devsite.bitbox.server.EncodingTools;
 import pl.devsite.bitbox.server.HttpTools;
 import pl.devsite.bitbox.tools.InetTools;
 import pl.devsite.configuration.Configuration;
@@ -100,7 +99,7 @@ public class HtmlLister extends InputStream {
 	}*/
 	private String divideStringRequest(Sendable s) {
 		StringBuilder result = new StringBuilder();
-		if (s.getParent() != null) {
+		if (s.getParent() != null && !(s.getParent() instanceof SendableRoot)) {
 			result.append(divideStringRequest(s.getParent()));
 		} else {
 			result.append("<a href=\"/\">[root]</a>");
