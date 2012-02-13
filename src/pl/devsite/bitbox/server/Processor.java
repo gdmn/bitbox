@@ -17,7 +17,7 @@ import pl.devsite.bitbox.server.servlets.InputProcessor;
 public class Processor {
 
 	private static final Logger logger = Logger.getLogger(Parser.class.getName());
-	private BitBoxConfiguration bitBoxConfiguration = BitBoxConfiguration.getInstance();
+	private BitBoxConfiguration config = BitBoxConfiguration.getInstance();
 	private final RequestContext context;
 	private Sendable response = null, potentialResponse = null;
 
@@ -39,7 +39,7 @@ public class Processor {
 	}
 
 	private void processAuthorization() {
-		context.setAuthenticator(response == null ? null : response.getAuthenticator());
+		context.setAuthenticator(potentialResponse == null ? null : potentialResponse.getAuthenticator());
 		if (context.getAuthenticator() == HttpTools.NULLAUTHENTICATOR) {
 			context.setAuthenticator( null);
 		}

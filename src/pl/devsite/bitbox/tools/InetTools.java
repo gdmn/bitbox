@@ -90,7 +90,9 @@ public class InetTools {
 						result.add(ip.getHostAddress());
 					}
 					internalIpCache = result;
-					logger.log(Level.INFO, "internal IP: " + internalIpCache);
+					if (internalIpCache != null && internalIpCache.size() > 0) {
+						logger.log(Level.INFO, "internal IP: " + (internalIpCache.size() == 1 ? internalIpCache.get(0) : internalIpCache));
+					}
 				} catch (SocketException e) {
 					logger.log(Level.SEVERE, "getting internal IP failed, " + e.getMessage(), e);
 					internalIpCache = null;
