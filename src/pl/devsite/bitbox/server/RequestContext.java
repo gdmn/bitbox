@@ -17,7 +17,6 @@ public class RequestContext {
 	private BufferedOutputStream clientOut;
 	private Integer rangeStart = null;
 	private Integer rangeStop = null;
-	private int temporaryResultCode = 0;
 	private HttpHeader requestHeader, responseHeader;
 	private Socket socket;
 	private Sendable sendableRoot, sendableResponse;
