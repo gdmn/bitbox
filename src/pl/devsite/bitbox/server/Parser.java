@@ -52,9 +52,9 @@ public class Parser {
 					context.setRangeStart( null);
 				}
 			} else {
-				context.setTemporaryResultCode(416);
+				context.setResponseHeader(new HttpHeader(416));
 			}
 		}
 	}
-	
+
 }

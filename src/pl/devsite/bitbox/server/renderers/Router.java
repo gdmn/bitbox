@@ -1,17 +1,12 @@
 package pl.devsite.bitbox.server.renderers;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import pl.devsite.bitbox.sendables.Sendable;
 import pl.devsite.bitbox.sendables.SendableFileWithMimeResolver;
 import pl.devsite.bitbox.server.BitBoxConfiguration;
 
-import static pl.devsite.bitbox.server.BitBoxConfiguration.*;
 import pl.devsite.bitbox.server.HttpHeader;
-import pl.devsite.bitbox.server.HttpTools;
 import pl.devsite.bitbox.server.RequestContext;
 
 /**

@@ -70,6 +70,11 @@ public class HttpHeader {
 		readerWriter = ReaderWriterType.WRITER;
 	}
 
+	public HttpHeader(int httpResponseCode) {
+		this();
+		setHttpResponseCode(code);
+	}
+
 	public static enum HttpRequestType {
 
 		GET, HEAD, POST

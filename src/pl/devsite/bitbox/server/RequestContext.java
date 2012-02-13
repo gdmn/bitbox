@@ -72,12 +72,8 @@ public class RequestContext {
 		this.socket = socket;
 	}
 
-	public int getTemporaryResultCode() {
-		return temporaryResultCode;
-	}
-
-	public void setTemporaryResultCode(int temporaryResultCode) {
-		this.temporaryResultCode = temporaryResultCode;
+	public int getHttpResponseCode() {
+		return responseHeader == null ? 0 : responseHeader.getHttpResponseCode();
 	}
 
 	public String getAuthorization() {

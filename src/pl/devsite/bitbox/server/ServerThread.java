@@ -1,13 +1,11 @@
 package pl.devsite.bitbox.server;
 
-import pl.devsite.bitbox.server.renderers.Router;
-import java.io.*;
+import java.io.IOException;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.Renderer;
 import pl.devsite.bitbox.sendables.Sendable;
+import pl.devsite.bitbox.server.renderers.Router;
 
 /**
  *

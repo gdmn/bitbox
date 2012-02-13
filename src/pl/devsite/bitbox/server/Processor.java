@@ -1,14 +1,11 @@
 package pl.devsite.bitbox.server;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import pl.devsite.bitbox.authenticator.HttpAuthenticator;
 import pl.devsite.bitbox.sendables.Sendable;
 import pl.devsite.bitbox.sendables.SendableAdapter;
 import pl.devsite.bitbox.sendables.SendableTemplates;
-import static pl.devsite.bitbox.server.BitBoxConfiguration.*;
-import pl.devsite.bitbox.server.servlets.InputProcessor;
 
 /**
  *
@@ -26,8 +23,10 @@ public class Processor {
 	}
 
 	public void process() throws IOException {
-		context.setResponseHeader(new HttpHeader());
-		if (context.getTemporaryResultCode() == 0) {
+		if (context.getResponseHeader() == null) {
+			context.setResponseHeader(new HttpHeader());
+		}
+		if (context.getHttpResponseCode() == 0) {
 			processResponse();
 			processAuthorization();
 		}
@@ -55,8 +54,8 @@ public class Processor {
 	private boolean isOperationAllowed() throws IOException {
 		boolean result = false;
 		HttpHeader responseHeader = context.getResponseHeader();
-		if (context.getTemporaryResultCode() > 0) {
-			responseHeader.setHttpResponseCode(context.getTemporaryResultCode());
+		if (context.getHttpResponseCode() > 0) {
+			//responseHeader.setHttpResponseCode(context.getTemporaryResultCode());
 			response = SendableTemplates.SIMPLE.create(responseHeader);
 		} else if (context.getStringRequest() == null || (context.isPostRequest() && (context.getContentLength() < 1 || context.getContentType() == null))) {
 			logger.log(Level.WARNING, "bad request, invader: {0}", context.getHostAddress());
