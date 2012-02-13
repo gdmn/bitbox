@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import pl.devsite.bitbox.sendables.Sendable;
+import pl.devsite.bitbox.sendables.SendableFilter;
 import pl.devsite.bitbox.sendables.SendableRoot;
 import pl.devsite.configuration.Configuration;
 
@@ -39,7 +41,7 @@ public class BitBoxConfiguration extends Configuration {
 	public final static String PROPERTY_PROXY_HOST = "proxy.host";
 	public final static String PROPERTY_PROXY_TYPE = "proxy.type";
 	public final static String PROPERTY_PROXY_ENABLED = "proxy.enabled";
-	
+
 	public final static String PROPERTY_BIGBIT_NODE_NAME = "bigbit.node.name";
 	public final static String PROPERTY_BIGBIT_SERVER_HOST = "bigbit.server.host";
 	public final static String PROPERTY_BIGBIT_SERVER_PORT = "bigbit.server.port";
@@ -65,6 +67,14 @@ public class BitBoxConfiguration extends Configuration {
 	private BitBoxConfiguration() {
 		super();
 		tryToLoadConfig(null);
+		bitBoxRoot.setFilter(new SendableFilter() {
+
+			@Override
+			public boolean isAllowed(Sendable sendable, Object hostAddress, Object authenticatedUser) {
+				//System.out.println(">> "+hostAddress);
+				return true;
+			}
+		});
 	}
 
 	public static BitBoxConfiguration getInstance() {

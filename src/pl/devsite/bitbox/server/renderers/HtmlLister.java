@@ -104,7 +104,9 @@ public class HtmlLister extends InputStream {
 		} else {
 			result.append("<a href=\"/\">[root]</a>");
 		}
-		result.append(" / <a href=\"" + s.getAddress() + "\">" + s + "</a>");
+		if (!(s instanceof SendableRoot)) {
+			result.append(" / <a href=\"" + s.getAddress() + "\">" + s + "</a>");
+		}
 		return result.toString();
 	}
 
