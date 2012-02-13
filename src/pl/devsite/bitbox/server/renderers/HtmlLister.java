@@ -73,7 +73,7 @@ public class HtmlLister extends InputStream {
     @Override
     public int read() throws IOException {
         if (htmlListBuffer == null) {
-            htmlListBuffer = (createHtmlHeader(null) + getHtmlList() +createHtmlFooter()).getBytes("UTF-8");
+            htmlListBuffer = (createHtmlHeader() + getHtmlList() +createHtmlFooter()).getBytes("UTF-8");
         }
         if (htmlListBufferPos >= htmlListBuffer.length) {
             return -1;
@@ -110,8 +110,9 @@ public class HtmlLister extends InputStream {
 		return result.toString();
 	}
 
-	private String createHtmlHeader(String stringRequest) throws IOException {
+	private String createHtmlHeader() throws IOException {
 		StringBuilder result = new StringBuilder();
+		String stringRequest = sendable.getAddress();
 		if (!"".equals(stringRequest)) {
 			String title;
 			title = bitBoxConfiguration.getProperty(BitBoxConfiguration.PROPERTY_NAME) + " - " + stringRequest;
