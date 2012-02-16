@@ -93,13 +93,16 @@ public class HttpDigestAuthenticator implements HttpAuthenticator {
             String nc = findValue("nc", authorizationData);
             String cnonce = findValue("cnonce", authorizationData);
             String response = findValue("response", authorizationData);
+			String givenOpaque = findValue("opaque", authorizationData);
             if (username == null || ha1 == null || uri == null || nonce == null || nc == null || 
-                    cnonce == null || response == null || !opaque.equals(findValue("opaque", authorizationData)) ) {
+                    cnonce == null || response == null || !opaque.equals(givenOpaque) ) {
                 return null;
             }
-            String ha2 = HttpTools.md5sum("GET:"+uri);
-            String proper = HttpTools.md5sum(ha1+":"+nonce+":"+nc+":"+cnonce+":auth:"+ha2);
-            if (proper.equals(response)) {
+            String haGet = HttpTools.md5sum("GET:"+uri);
+            String properGet = HttpTools.md5sum(ha1+":"+nonce+":"+nc+":"+cnonce+":auth:"+haGet);
+            String haHead = HttpTools.md5sum("HEAD:"+uri);
+            String properHead = HttpTools.md5sum(ha1+":"+nonce+":"+nc+":"+cnonce+":auth:"+haHead);
+            if (properGet.equals(response) || properHead.equals(response)) {
                 return username;
             }
             return null;

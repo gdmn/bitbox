@@ -15,6 +15,7 @@ public class SendableFileWithMimeResolver extends SendableFile implements MetaDa
 
 	public static String AUDIO_HTTP_HEADER_PREFIX = "Audio-";
 	private MimeResolver mimeResolver = MimeResolver.getInstance();
+	private static final Logger logger = Logger.getLogger(SendableFileWithMimeResolver.class.getName());
 	private MetaData.Provider metaData;
 
 	public SendableFileWithMimeResolver(Sendable parent, File file) {
@@ -60,7 +61,7 @@ public class SendableFileWithMimeResolver extends SendableFile implements MetaDa
 						result.append(audioInfo).append(HttpTools.RN);
 					}
 				} catch (IOException ex) {
-					Logger.getLogger(HttpTools.class.getName()).log(Level.SEVERE, null, ex);
+					logger.log(Level.SEVERE, null, ex);
 				}
 			}
 			if (result.length() > 0) {

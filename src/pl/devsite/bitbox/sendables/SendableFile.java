@@ -9,6 +9,7 @@ import pl.devsite.bitbox.server.renderers.HtmlLister;
 public class SendableFile extends SendableAdapter {
 
 	protected File file;
+	private static final Logger logger = Logger.getLogger(SendableFile.class.getName());
 
 	public SendableFile(Sendable parent, File file) {
 		// (new File("c:/")).getName() --> ""
@@ -34,7 +35,7 @@ public class SendableFile extends SendableAdapter {
 				return new FileInputStream(file);
 			}
 		} catch (FileNotFoundException ex) {
-			Logger.getLogger(SendableFile.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+			logger.log(Level.SEVERE, ex.getMessage(), ex);
 		} finally {
 		}
 		return null;
@@ -118,7 +119,7 @@ public class SendableFile extends SendableAdapter {
 			try {
 				result = file.getCanonicalPath().toString();
 			} catch (IOException ex) {
-				Logger.getLogger(SendableFile.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+				logger.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 			if (file.isDirectory() && !result.endsWith(java.io.File.separator)) {
 				result = result + java.io.File.separator;

@@ -50,7 +50,7 @@ public class HttpHeader {
 			} while (c4 > -1 && !((c1 == '\r' && c2 == '\n' && c3 == '\r' && c4 == '\n')
 					|| (c3 == '\n' && c4 == '\n'))); // for linux nc compatibility
 		} catch (IOException ex) {
-			Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+			Logger.getLogger(HttpHeader.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		addMultiple(result.toString());
 	}
