@@ -58,11 +58,11 @@ public class MusicEncoder {
 		}
 
 		String aacPath = bitBoxConfiguration.getProperty(BitBoxConfiguration.PROPERTY_TOOLS_AAC);
-		if ((!oggEncoder) && (aacPath == null || (new File(aacPath).canExecute() == false))) {
+		if (aacEncoder && (aacPath == null || (new File(aacPath).canExecute() == false))) {
 			throw new IOException("No executable tool: neroAacEnc");
 		}
 		String lamePath = bitBoxConfiguration.getProperty(BitBoxConfiguration.PROPERTY_TOOLS_LAME);
-		if ((!oggEncoder) && (lamePath == null || (new File(lamePath).canExecute() == false))) {
+		if (lameEncoder && (lamePath == null || (new File(lamePath).canExecute() == false))) {
 			throw new IOException("No executable tool: lame");
 		}
 		String oggencPath = bitBoxConfiguration.getProperty(BitBoxConfiguration.PROPERTY_TOOLS_OGGENC);
