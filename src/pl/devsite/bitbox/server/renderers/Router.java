@@ -7,29 +7,28 @@ import pl.devsite.bitbox.sendables.SendableFileWithMimeResolver;
 import pl.devsite.bitbox.server.BitBoxConfiguration;
 
 import pl.devsite.bitbox.server.HttpHeader;
+import pl.devsite.bitbox.server.Processor;
 import pl.devsite.bitbox.server.RequestContext;
 
 /**
  *
  * @author dmn
  */
-public class Router {
+public class Router implements Processor{
 
 	private static final Logger logger = Logger.getLogger(Router.class.getName());
 	private BitBoxConfiguration config = BitBoxConfiguration.getInstance();
 	private RequestContext context;
-	private Renderer renderer;
 
-	public Router(RequestContext context) {
+	@Override
+	public void initialize(RequestContext context) {
 		this.context = context;
 	}
-
-	public Renderer getRenderer() throws IOException {
-		if (renderer == null) {
+	@Override
+	public void execute() throws Exception {
 			processRequestAndSendResult();
-		}
-		return renderer;
 	}
+
 
 //
 //	private void sendUTF8(String text) throws IOException {
@@ -91,9 +90,10 @@ public class Router {
 			}
 			//sendUTF8(header.toString());
 
+			Processor renderer = null;
 			if (context.isGetRequest()) {
 				if (context.isIcyMetadata() && context.getResponseHeader().getHttpResponseCode() == 200) {
-					renderer = new IcyRenderer(context);
+					 renderer = new IcyRenderer();
 					//sendIcyStream(bis, response, 1024 * 16);
 				} else {
 					if (response != null) {
@@ -101,14 +101,17 @@ public class Router {
 							context.setRangeStop(new Integer((int) response.getContentLength() - 1));
 						}
 					}
-					renderer = new Renderer(context);
+					 renderer = new Renderer();
 					//sendStream(bis, context.getRangeStart(), context.getRangeStop());
 				}
 			}
 
 			if (renderer == null) {
-				renderer = new Renderer(context);
+				renderer = new Renderer();
 			}
+
+			renderer.initialize(context);
+			context.setRenderer(renderer);
 		}
 	}
 }

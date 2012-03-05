@@ -3,33 +3,32 @@ package pl.devsite.bitbox.server;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.net.Socket;
-import pl.devsite.bitbox.sendables.Sendable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author dmn
  */
-public class Parser {
-	private RequestContext context = new RequestContext();
-	private boolean parsed = false;
+public class Parser implements Processor {
+	private RequestContext context;
 
-	public Parser(Socket socket, Sendable root) throws IOException {
-		context.setSocket(socket);
-		context.setSendableRoot(root);
-		context.setClientIn(new BufferedInputStream(socket.getInputStream()));
-		context.setClientOut(new BufferedOutputStream(socket.getOutputStream()));
+	@Override
+	public void initialize(RequestContext context) {
+		
+		this.context = context;
+		try {
+			context.setClientIn(new BufferedInputStream(context.getSocket().getInputStream()));
+			context.setClientOut(new BufferedOutputStream(context.getSocket().getOutputStream()));
 
-		context.setRequestHeader(new HttpHeader(context.getClientIn()));
+			context.setRequestHeader(new HttpHeader(context.getClientIn()));
+		} catch (IOException ex) {
+			this.context.getExceptionListener().exceptionThrown(ex);
+		}
 	}
 
-	public RequestContext getContext() {
-		if (!parsed) parseRequestAttributes();
-		return context;
-	}
-
-	private void parseRequestAttributes() {
-		parsed = true;
+	@Override
+	public void execute() throws Exception {
 		String temp;
 		temp = context.getRequestHeader().get(HttpTools.RANGE);
 		if (temp != null) {

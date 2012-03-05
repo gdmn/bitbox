@@ -20,12 +20,8 @@ public class IcyRenderer extends Renderer {
 	private static final Logger logger = Logger.getLogger(IcyRenderer.class.getName());
 	public static final int CHUNK_SIZE = 1024 * 16;
 
-	public IcyRenderer(RequestContext context) {
-		super(context);
-	}
-
 	@Override
-	public void send() throws IOException {
+	public void execute() throws Exception {
 		//super.send();
 		sendHeader();
 		if (context.getResponseStream() != null) {

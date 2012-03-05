@@ -11,18 +11,20 @@ import pl.devsite.bitbox.sendables.SendableTemplates;
  *
  * @author dmn
  */
-public class Processor {
+public class AuthProcessor implements Processor {
 
 	private static final Logger logger = Logger.getLogger(Parser.class.getName());
 	private BitBoxConfiguration config = BitBoxConfiguration.getInstance();
-	private final RequestContext context;
+	private RequestContext context;
 	private Sendable response = null, potentialResponse = null;
 
-	public Processor(RequestContext context) {
+	@Override
+	public void initialize(RequestContext context) {
 		this.context = context;
 	}
 
-	public void process() throws IOException {
+	@Override
+	public void execute() throws Exception {
 		if (context.getResponseHeader() == null) {
 			context.setResponseHeader(new HttpHeader());
 		}
@@ -40,7 +42,7 @@ public class Processor {
 	private void processAuthorization() {
 		context.setAuthenticator(potentialResponse == null ? null : potentialResponse.getAuthenticator());
 		if (context.getAuthenticator() == HttpTools.NULLAUTHENTICATOR) {
-			context.setAuthenticator( null);
+			context.setAuthenticator(null);
 		}
 		context.setAuthenticatedUser((context.getAuthorization() == null || context.getAuthenticator() == null) ? null : context.getAuthenticator().allowed(context.getAuthorization()));
 	}
