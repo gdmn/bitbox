@@ -32,12 +32,11 @@ public class HttpHeader {
 		addMultiple(request);
 	}
 
-	public HttpHeader(BufferedInputStream input) {
+	public HttpHeader(BufferedInputStream input) throws IOException {
 		this();
 		readerWriter = ReaderWriterType.READER;
 		int c1 = 0, c2 = 0, c3 = 0, c4 = 0;
 		StringBuilder result = new StringBuilder(1024);
-		try {
 			do {
 				c1 = c2;
 				c2 = c3;
@@ -49,9 +48,6 @@ public class HttpHeader {
 				}
 			} while (c4 > -1 && !((c1 == '\r' && c2 == '\n' && c3 == '\r' && c4 == '\n')
 					|| (c3 == '\n' && c4 == '\n'))); // for linux nc compatibility
-		} catch (IOException ex) {
-			Logger.getLogger(HttpHeader.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
-		}
 		addMultiple(result.toString());
 	}
 

@@ -5,6 +5,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.InputStream;
 import java.net.Socket;
+import java.util.logging.Logger;
 import pl.devsite.bitbox.authenticator.HttpAuthenticator;
 import pl.devsite.bitbox.sendables.Sendable;
 
@@ -23,6 +24,7 @@ public class RequestContext {
 	private Sendable sendableRoot, sendableResponse;
 	private String authenticatedUser;
 	private HttpAuthenticator authenticator;
+	public static final Logger logger = Logger.getLogger(RequestContext.class.getName());
 
 	public BufferedInputStream getClientIn() {
 		return clientIn;
@@ -187,15 +189,15 @@ public class RequestContext {
 	public void setExceptionListener(ExceptionListener exceptionListener) {
 		this.exceptionListener = exceptionListener;
 	}
-	
+
 	private Processor renderer;
 
 	public void setRenderer(Processor renderer) {
 		this.renderer = renderer;
 	}
-	
+
 	public Processor getRenderer() {
 		return renderer;
 	}
-	
+
 }
