@@ -129,7 +129,7 @@ public class InetTools {
 
 						OutputStream out = s.getOutputStream();
 						PrintWriter outw = new PrintWriter(out, false);
-						outw.print("GET " + file + " HTTP/1.1\r\n");
+						outw.print("GET " + file + " HTTP/1.0\r\n");
 						outw.print("Accept: text/plain, text/html, text/*\r\n");
 						outw.print("Host: " + host + "\r\n");
 						outw.print("\r\n");

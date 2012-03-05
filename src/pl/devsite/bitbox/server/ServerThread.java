@@ -18,7 +18,6 @@ public class ServerThread implements Runnable, ExceptionListener {
 	private Socket socket;
 	private Sendable root;
 	private BitBoxConfiguration config = BitBoxConfiguration.getInstance();
-	private int exceptionCounter = 0;
 
 	public ServerThread(final Socket socket_, final Sendable root) {
 		this.socket = socket_;
@@ -40,15 +39,15 @@ public class ServerThread implements Runnable, ExceptionListener {
 			parser = new Parser();
 			parser.initialize(context);
 			parser.execute();
-			
+
 			processor = new AuthProcessor();
 			processor.initialize(context);
 			processor.execute();
-			
+
 			router = new Router();
 			router.initialize(context);
 			router.execute();
-			
+
 			context.getRenderer().execute();
 
 		} catch (Exception ex) {

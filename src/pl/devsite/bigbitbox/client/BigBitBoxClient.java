@@ -163,7 +163,7 @@ public class BigBitBoxClient extends SocketCommunicator {
 //				}
 //			} while (line != null);
 //			System.out.println("i'm full");
-			send("POST /bitbox/ HTTP/1.1");
+			send("POST /bitbox/ HTTP/1.0");
 			send("Host: " + serverHostPort);
 			send("Connection: keep-alive");
 //			send("TE: trailers");

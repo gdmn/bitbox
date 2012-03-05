@@ -63,7 +63,7 @@ public class HttpTools {
 
 	public static String createHttpResponse(int code, String server, long rangeStart, long rangeStop, long contentLength, String contentType) {
 		StringBuilder result = new StringBuilder();
-		result.append("HTTP/1.1");
+		result.append("HTTP/1.0");
 		result.append(" " + code + " ");
 		String message = getHttpCodes().get(code);
 		if (message == null) {
@@ -209,7 +209,7 @@ public class HttpTools {
 			result.append(s + RN);
 		}
 		/*
-		 * 
+		 *
 		String metadata;
 		if (sendable instanceof SendableFileWithMimeResolver) {
 			SendableFileWithMimeResolver sf = (SendableFileWithMimeResolver) sendable;
@@ -307,7 +307,7 @@ public class HttpTools {
 		}
 		return result.toString();
 	}
-	
+
 	public static HashMap<String, String> headersToMap(String headers) {
 		HashMap<String, String> result = new HashMap<String, String>();
 		String[] lines = headers.split(HttpTools.RN);
