@@ -59,8 +59,8 @@ public class SystemProcess {
 
 	@Override
 	public String toString() {
-		return (processName != null ? processName + " " : "")
-				+ (processHandle != null ? "(" + processHandle.toString() + ")" : "");
+		return (processName != null ? processName + "" : "");
+				//+ (processHandle != null ? "(" + processHandle.toString() + ")" : "");
 	}
 
 	public static void pump(InputStream inputStream, OutputStream outputStream) throws IOException {

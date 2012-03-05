@@ -1,5 +1,6 @@
 package pl.devsite.bitbox.server;
 
+import java.beans.ExceptionListener;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.InputStream;
@@ -176,4 +177,25 @@ public class RequestContext {
 	public void setSendableResponse(Sendable sendableResponse) {
 		this.sendableResponse = sendableResponse;
 	}
+
+	private ExceptionListener exceptionListener;
+
+	public ExceptionListener getExceptionListener() {
+		return exceptionListener;
+	}
+
+	public void setExceptionListener(ExceptionListener exceptionListener) {
+		this.exceptionListener = exceptionListener;
+	}
+	
+	private Processor renderer;
+
+	public void setRenderer(Processor renderer) {
+		this.renderer = renderer;
+	}
+	
+	public Processor getRenderer() {
+		return renderer;
+	}
+	
 }

@@ -4,22 +4,25 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import pl.devsite.bitbox.server.Processor;
 import pl.devsite.bitbox.server.RequestContext;
 
 /**
  *
  * @author dmn
  */
-public class Renderer {
+public class Renderer implements Processor {
 
 	private static final Logger logger = Logger.getLogger(Renderer.class.getName());
 	protected RequestContext context;
 
-	public Renderer(RequestContext context) {
+	@Override
+	public void initialize(RequestContext context) {
 		this.context = context;
 	}
 
-	public void send() throws IOException {
+	@Override
+	public void execute() throws Exception {
 		sendHeader();
 		if (context.isGetRequest()) {
 			if (context.getResponseStream() != null) {
