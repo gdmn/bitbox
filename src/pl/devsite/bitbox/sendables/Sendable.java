@@ -14,6 +14,8 @@ public interface Sendable {
      */
     String getMimeType();
     long getContentLength();
+	
+	String getName();
     
     int getAttributes();
     HttpAuthenticator getAuthenticator();

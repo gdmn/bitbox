@@ -21,12 +21,13 @@ public class IcyRenderer extends Renderer {
 	public static final int CHUNK_SIZE = 1024 * 16;
 
 	@Override
-	public void execute() throws Exception {
+	public Object execute() throws Exception {
 		//super.send();
 		sendHeader();
 		if (context.getResponseStream() != null) {
 			sendIcyStream();
 		}
+		return null;
 	}
 
 	private void sendIcyStreamTitle(String title, int chunkSize) throws IOException {

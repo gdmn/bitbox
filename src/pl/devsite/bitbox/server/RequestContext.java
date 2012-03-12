@@ -25,6 +25,7 @@ public class RequestContext {
 	private String authenticatedUser;
 	private HttpAuthenticator authenticator;
 	public static final Logger logger = Logger.getLogger(RequestContext.class.getName());
+	//private Operation operation;
 
 	public BufferedInputStream getClientIn() {
 		return clientIn;
@@ -189,7 +190,7 @@ public class RequestContext {
 	public void setExceptionListener(ExceptionListener exceptionListener) {
 		this.exceptionListener = exceptionListener;
 	}
-
+/*
 	private Processor renderer;
 
 	public void setRenderer(Processor renderer) {
@@ -198,6 +199,15 @@ public class RequestContext {
 
 	public Processor getRenderer() {
 		return renderer;
+	}*/
+/*
+	public Operation getOperation() {
+		return operation;
 	}
+
+	public void setOperation(Operation operation) {
+		this.operation = operation;
+	}
+*/
 
 }

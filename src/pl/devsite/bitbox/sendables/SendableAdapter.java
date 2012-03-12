@@ -103,6 +103,7 @@ public abstract class SendableAdapter implements Sendable {
         return logger;
     }
 
+	@Override
     public String getName() {
         return name;
     }

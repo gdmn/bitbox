@@ -1,22 +1,22 @@
-package pl.devsite.bitbox.server.renderers;
+package pl.devsite.bitbox.server;
 
 import java.io.IOException;
 import java.util.logging.Logger;
 import pl.devsite.bitbox.sendables.Sendable;
+import pl.devsite.bitbox.sendables.SendableAdapter;
 import pl.devsite.bitbox.sendables.SendableFileWithMimeResolver;
-import pl.devsite.bitbox.server.BitBoxConfiguration;
-
-import pl.devsite.bitbox.server.HttpHeader;
-import pl.devsite.bitbox.server.Processor;
-import pl.devsite.bitbox.server.RequestContext;
+import pl.devsite.bitbox.sendables.SendableString;
+import pl.devsite.bitbox.server.*;
+import pl.devsite.bitbox.server.renderers.IcyRenderer;
+import pl.devsite.bitbox.server.renderers.Renderer;
+import pl.devsite.bitbox.server.renderers.RendererFactory;
 
 /**
  *
  * @author dmn
  */
-public class Router implements Processor{
+public class Router implements Processor<Object> {
 
-	private static final Logger logger = Logger.getLogger(Router.class.getName());
 	private BitBoxConfiguration config = BitBoxConfiguration.getInstance();
 	private RequestContext context;
 
@@ -24,11 +24,74 @@ public class Router implements Processor{
 	public void initialize(RequestContext context) {
 		this.context = context;
 	}
+
 	@Override
-	public void execute() throws Exception {
-			processRequestAndSendResult();
+	public Object execute() throws Exception {
+		processRequestAndSendResult();
+		return null;
 	}
 
+	public Object execute(Object command) throws Exception {
+		if (command instanceof Processor) {
+			return ((Processor) command).execute();
+		}
+
+		if (command instanceof Sendable) {
+			return command;
+		}
+
+		Object result = null;
+
+		Sendable sendable = null;
+		Operation op = null;
+
+		if (command instanceof Operation) {
+			op = (Operation) command;
+		} else if (command instanceof String) {
+			op = new Operation((String) command);
+		}
+
+		Operation.Type type = op == null ? null : op.getType();
+
+		if (Operation.Type.UNKNOWN.equals(type)) {
+			sendable = SendableAdapter.tryToFindSendable(context.getSendableRoot(), op.getArgument());
+			if (sendable != null) {
+				result = sendable;
+			} else {
+				result = "error:404";
+			}
+		} else if (Operation.Type.ERROR.equals(type)) {
+			HttpHeader resultHeader = new HttpHeader();
+			int code = 400;
+			int colonIndex = op.getArgument().indexOf(':');
+			String codeArgument = op.getArgument(), messageArgument = null;
+			if (colonIndex > 0) {
+				codeArgument = op.getArgument().substring(0, colonIndex);
+				messageArgument = op.getArgument().substring(colonIndex + 1);
+			}
+			try {
+				code = Integer.parseInt(codeArgument);
+			} catch (Exception e) {
+				messageArgument = codeArgument;
+			}
+			result = createError(resultHeader, code, messageArgument);
+			context.setResponseHeader(resultHeader);
+		}
+		return result;
+	}
+
+	private static Sendable createError(HttpHeader header, int code, String message) {
+		if (message == null) {
+			message = HttpTools.getHttpCodes().get(code);
+		}
+		Sendable sendable = new SendableString(null, "error", message);
+		header.setHttpResponseCode(code);
+		return sendable;
+	}
+
+	private static Sendable createError(HttpHeader header, int code) {
+		return createError(header, code, HttpTools.getHttpCodes().get(code));
+	}
 
 //
 //	private void sendUTF8(String text) throws IOException {
@@ -90,28 +153,7 @@ public class Router implements Processor{
 			}
 			//sendUTF8(header.toString());
 
-			Processor renderer = null;
-			if (context.isGetRequest()) {
-				if (context.isIcyMetadata() && context.getResponseHeader().getHttpResponseCode() == 200) {
-					 renderer = new IcyRenderer();
-					//sendIcyStream(bis, response, 1024 * 16);
-				} else {
-					if (response != null) {
-						if (response.getContentLength() > 0 && context.getRangeStop() == null) {
-							context.setRangeStop(new Integer((int) response.getContentLength() - 1));
-						}
-					}
-					 renderer = new Renderer();
-					//sendStream(bis, context.getRangeStart(), context.getRangeStop());
-				}
-			}
-
-			if (renderer == null) {
-				renderer = new Renderer();
-			}
-
-			renderer.initialize(context);
-			context.setRenderer(renderer);
+			//Processor renderer = RendererFactory.getRenderer(context);
 		}
 	}
 }

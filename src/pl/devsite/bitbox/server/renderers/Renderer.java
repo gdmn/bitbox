@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import pl.devsite.bitbox.server.HttpHeader;
 import pl.devsite.bitbox.server.Processor;
 import pl.devsite.bitbox.server.RequestContext;
 
@@ -11,24 +12,30 @@ import pl.devsite.bitbox.server.RequestContext;
  *
  * @author dmn
  */
-public class Renderer implements Processor {
+public class Renderer implements Processor<Object> {
 
-	private static final Logger logger = Logger.getLogger(Renderer.class.getName());
+	private Logger logger;
 	protected RequestContext context;
 
 	@Override
 	public void initialize(RequestContext context) {
 		this.context = context;
+		this.logger = context.logger;
 	}
 
 	@Override
-	public void execute() throws Exception {
+	public Object execute() throws Exception {
+		if (context.getResponseHeader() == null) {
+			context.setResponseHeader(new HttpHeader());
+			context.getResponseHeader().setHttpResponseCode(200);
+		}
 		sendHeader();
 		if (context.isGetRequest()) {
 			if (context.getResponseStream() != null) {
 				sendStream(context.getResponseStream(), context.getRangeStart(), context.getRangeStop());
 			}
 		}
+		return null;
 	}
 
 	protected void sendHeader() throws IOException {

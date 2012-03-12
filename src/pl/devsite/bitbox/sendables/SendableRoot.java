@@ -60,7 +60,7 @@ public class SendableRoot extends SendableAdapter {
         }
         String id_str = id.toString().toLowerCase();
         for (Sendable s : list) {
-            if (id_str.equals(s.toString().toLowerCase())) {
+            if (id_str.equals(s.getName().toLowerCase())) {
                 return s;
             }
         }

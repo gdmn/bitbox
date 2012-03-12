@@ -6,7 +6,7 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import pl.devsite.bitbox.sendables.Sendable;
-import pl.devsite.bitbox.server.renderers.Router;
+import pl.devsite.bitbox.server.renderers.Renderer;
 
 /**
  *
@@ -24,6 +24,18 @@ public class ServerThread implements Runnable, ExceptionListener {
 		this.root = root;
 	}
 
+//	public static Operation stringToOperation(Object s) {
+//		if (s == null) {
+//			return null;
+//		}
+//		if (s instanceof Operation) {
+//			return (Operation) s;
+//		}
+//		if (s instanceof String) {
+//			return new Operation((String) s);
+//		}
+//		return null;
+//	}
 	@Override
 	public void run() {
 		RequestContext context = new RequestContext();
@@ -31,25 +43,61 @@ public class ServerThread implements Runnable, ExceptionListener {
 		context.setSocket(socket);
 		context.setSendableRoot(root);
 
-		Parser parser;
+		HttpRequestParser parser;
 		AuthProcessor processor;
 		Router router;
+		Object op;
 
 		try {
-			parser = new Parser();
+			parser = new HttpRequestParser();
 			parser.initialize(context);
-			parser.execute();
+			String requestedString = parser.execute();
 
-			processor = new AuthProcessor();
-			processor.initialize(context);
-			processor.execute();
+			op = requestedString;
 
-			router = new Router();
-			router.initialize(context);
-			router.execute();
+//			processor = new AuthProcessor();
+//			processor.initialize(context);
+//			processor.execute();
 
-			context.getRenderer().execute();
+			do {
+				do {
+					router = new Router();
+					router.initialize(context);
+					Object nextRoute = router.execute(op);
+					if (nextRoute == op) {
+						break;
+					}
+					op = nextRoute;
 
+//					if (op == Processor.LAST) {
+//						break;
+//					}
+
+					if (op instanceof Processor) {
+						Processor opProcessor = (Processor) op;
+						op = opProcessor.execute();
+					}
+//
+//				if (op.getType().equals(Operation.Type.READY)) {
+//					op = stringToOperation(context.getRenderer().execute());
+//					if (op.getType().equals(Operation.Type.DONE)) {
+//						break;
+//					}
+//				}
+
+				} while (true);
+
+				if (op instanceof Sendable) {
+					context.setSendableResponse((Sendable) op);
+					break;
+				} else {
+					op = "error:routing failed";
+				}
+			} while (true);
+			
+			Renderer renderer = new Renderer();
+			renderer.initialize(context);
+			renderer.execute();
 		} catch (Exception ex) {
 			exceptionThrown(ex);
 		} finally {
