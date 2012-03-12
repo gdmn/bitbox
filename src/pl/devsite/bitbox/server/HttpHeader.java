@@ -142,8 +142,8 @@ public class HttpHeader {
 
 	public String getRequestedString() {
 		String result = null;
-		if (HttpRequestType.GET.equals(bufHttpRequestType) || HttpRequestType.HEAD.equals(bufHttpRequestType)
-				|| HttpRequestType.POST.equals(bufHttpRequestType)) {
+		if (HttpRequestType.GET.equals(getType()) || HttpRequestType.HEAD.equals(getType())
+				|| HttpRequestType.POST.equals(getType())) {
 			String line = data.get(0);
 			result = line.substring(line.indexOf(' '), line.lastIndexOf(' ')).trim();
 			result = EncodingTools.urlDecodeUTF(result);

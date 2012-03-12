@@ -11,7 +11,7 @@ import pl.devsite.bitbox.sendables.SendableTemplates;
  *
  * @author dmn
  */
-public class AuthProcessor implements Processor {
+public class AuthProcessor implements Processor<Object> {
 
 	private BitBoxConfiguration config = BitBoxConfiguration.getInstance();
 	private RequestContext context;
@@ -23,7 +23,7 @@ public class AuthProcessor implements Processor {
 	}
 
 	@Override
-	public void execute() throws Exception {
+	public Object execute() throws Exception {
 		if (context.getResponseHeader() == null) {
 			context.setResponseHeader(new HttpHeader());
 		}
@@ -36,6 +36,7 @@ public class AuthProcessor implements Processor {
 			response = potentialResponse;
 		}
 		context.setSendableResponse(response);
+		return response;
 	}
 
 	private void processAuthorization() {

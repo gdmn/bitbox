@@ -3,19 +3,19 @@ package pl.devsite.bitbox.server;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import pl.devsite.bitbox.sendables.Sendable;
+import pl.devsite.bitbox.sendables.SendableAdapter;
 
 /**
  *
  * @author dmn
  */
-public class Parser implements Processor {
+public class HttpRequestParser implements Processor<String> {
 	private RequestContext context;
 
 	@Override
 	public void initialize(RequestContext context) {
-		
+
 		this.context = context;
 		try {
 			context.setClientIn(new BufferedInputStream(context.getSocket().getInputStream()));
@@ -28,7 +28,7 @@ public class Parser implements Processor {
 	}
 
 	@Override
-	public void execute() throws Exception {
+	public String execute() throws Exception {
 		String temp;
 		temp = context.getRequestHeader().get(HttpTools.RANGE);
 		if (temp != null) {
@@ -54,6 +54,9 @@ public class Parser implements Processor {
 				context.setResponseHeader(new HttpHeader(416));
 			}
 		}
+//		Sendable sendable = SendableAdapter.tryToFindSendable(context.getSendableRoot(), context.getStringRequest());
+//		context.setSendableResponse(sendable);
+		return context.getStringRequest();
 	}
 
 }

@@ -4,7 +4,18 @@ package pl.devsite.bitbox.server;
  *
  * @author dmn
  */
-public interface Processor {
+public interface Processor<T> {
+	public static final Processor LAST = new Processor<Processor>() {
+
+		@Override
+		public void initialize(RequestContext context) {
+		}
+
+		@Override
+		public Processor execute() throws Exception {
+			return this;
+		}		
+	};
 	void initialize(RequestContext context);
-	void execute() throws Exception;
+	T execute() throws Exception;
 }
